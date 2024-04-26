@@ -38,13 +38,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!session.user?.isAdmin) {
-      return NextResponse.json(
-        { error: "you should be admin." },
-        { status: 401 }
-      );
-    }
-
     const categorys = await db.category.findMany({
       orderBy: { createdAt: "desc" },
       include: {
