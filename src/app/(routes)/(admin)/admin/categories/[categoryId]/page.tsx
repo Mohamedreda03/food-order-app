@@ -41,18 +41,10 @@ export default function SingleCategoryPage() {
   const form = useForm<CategoryFormTypes>({
     resolver: zodResolver(CategorySchema),
     defaultValues: {
-      name: "",
-      image: "",
+      name: category?.name || "",
+      image: category?.image || "",
     },
   });
-
-  useEffect(() => {
-    if (isSuccess) {
-      form.setValue("name", category?.name);
-      form.setValue("image", category?.image);
-      setImage(category?.image);
-    }
-  }, [isSuccess]);
 
   const onSubmit = async (data: any) => {
     await updateCategory({ id: params.categoryId, data });
@@ -73,9 +65,9 @@ export default function SingleCategoryPage() {
       <div className="wrapper py-24">
         <div className="flex">
           <div className="flex-[0.4] flex flex-col items-center">
-            {image ? (
+            {form.getValues("image") ? (
               <Image
-                src={image}
+                src={form.getValues("image") as string}
                 width={180}
                 height={200}
                 className="rounded-md object-cover h-[200px] w-[180px]"

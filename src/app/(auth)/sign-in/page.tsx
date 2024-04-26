@@ -115,7 +115,7 @@ export default function Login() {
             href="/sign-up"
             className="text-muted-foreground text-sm underline text-center block w-full mt-5"
           >
-            I don't have an account.
+            I don&apos;t have an account.
           </Link>
         </div>
       </div>
