@@ -1,0 +1,125 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  name           String?
+  email          String? @unique
+  password       String?
+  tel            String?
+  street_address String?
+  post_code      String?
+  city           String?
+  country        String?
+  isAdmin        Boolean @default(false)
+
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  Order         Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Category {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  image    String?
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  price       Float?
+  image       String?
+  best_seller Boolean  @default(false)
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String   @db.ObjectId
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sizes Size[]
+}
+
+model Size {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  price     Float
+  product   Product @relation(fields: [productId], references: [id])
+  productId String  @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  status Status @default(PENDING)
+
+  items     CartItemType[]
+  total     Float
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+type CartItemType {
+  id       String
+  name     String
+  size     String
+  price    Float
+  image    String
+  quantity Int
+}
+
+type AddressType {
+  tel            String
+  street_address String
+  post_code      String
+  city           String
+  country        String
+}
+
+enum Status {
+  PENDING
+  PAID
+  FAILED
+  ON_THE_WAY
+  DELIVERED
+}
