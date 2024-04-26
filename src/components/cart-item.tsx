@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux";
 import { updateItem } from "@/rtk/features/cart/cartSlice";
 
 const CartItem = ({ item }: { item: CartItem }) => {
-  const total = (item.price as number) * item.quantity;
+  const total = (item.price as number) * (item.quantity || 1);
   const dispatch = useDispatch();
   return (
     <div className="border border-gray-200 p-5 rounded-md">
