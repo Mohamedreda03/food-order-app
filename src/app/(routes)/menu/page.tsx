@@ -4,11 +4,12 @@ import Loading from "@/components/Loading";
 import CategoryMenuItem from "@/components/category-menu-item";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { CartItem } from "@/rtk/features/cart/cartSlice";
 import { useGetAllCategoriesQuery } from "@/rtk/features/categories/categoriesApiSlice";
-import { Category, Product } from "@prisma/client";
+import { Category } from "@prisma/client";
 
 interface CategoryType extends Category {
-  products: Product[];
+  products: CartItem[];
 }
 
 const Page = () => {

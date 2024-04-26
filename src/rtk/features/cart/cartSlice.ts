@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface CartItem extends Product {
-  quantity: number;
-  size: "small" | "medium" | "large";
+  quantity?: number;
+  size?: "small" | "medium" | "large";
   newId?: number;
   sizes: Size[];
 }
