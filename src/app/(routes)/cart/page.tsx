@@ -21,7 +21,7 @@ const CartPage = () => {
   const dispatch = useDispatch();
   const data = useSelector((state: RootState) => state.cart.products);
 
-  const total = data?.reduce((acc, item) => {
+  const total = data?.reduce((acc, item: CartItemType) => {
     return acc + Number(item.price) * item.quantity!;
   }, 0);
 
