@@ -22,13 +22,13 @@ const CartPage = () => {
   const data = useSelector((state: RootState) => state.cart.products);
 
   const total = data?.reduce((acc, item) => {
-    return acc + Number(item.price) * (item.quantity ?? 0);
+    return acc + Number(item.price) * item.quantity!;
   }, 0);
 
   const handleCheckout = async () => {
     startTransition(async () => {
       const res = await axios.post("/api/checkout", { items: data });
-      await router.replace(res.data.url);
+      router.replace(res.data.url);
       dispatch(deleteAllItems());
     });
   };
