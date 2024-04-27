@@ -17,11 +17,16 @@ import { fCurrency } from "@/lib/utils";
 
 import { useDispatch } from "react-redux";
 import { addItem } from "@/rtk/features/cart/cartSlice";
+import { Product, Size } from "@prisma/client";
 
 interface DeleteAlertProps {
   isOpen: boolean;
   onClose: () => void;
-  item: CartItem;
+  item: ProductWithSize;
+}
+
+interface ProductWithSize extends Product {
+  sizes?: Size[];
 }
 
 export default function AddItemCartAlert({
@@ -98,6 +103,7 @@ export default function AddItemCartAlert({
                   ...item,
                   size: size as "small" | "medium" | "large",
                   quantity,
+                  newId: 0,
                 })
               );
             }}

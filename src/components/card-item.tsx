@@ -4,9 +4,10 @@ import { Button } from "./ui/button";
 import { fCurrency } from "@/lib/utils";
 import { type CartItem } from "@/rtk/features/cart/cartSlice";
 import AddItemCartAlert from "./models/add-cart-item-alert";
+import { Product } from "@prisma/client";
 
 interface CardItemProps {
-  item: CartItem;
+  item: Product;
 }
 
 export default function CardItem({ item }: CardItemProps) {

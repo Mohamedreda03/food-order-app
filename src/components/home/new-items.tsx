@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import LoadingCard from "../loading-card";
 import { useGetLastProductsQuery } from "@/rtk/features/products/productsApislice";
 import { Product } from "@prisma/client";
