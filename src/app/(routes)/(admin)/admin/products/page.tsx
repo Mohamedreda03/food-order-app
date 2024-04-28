@@ -13,25 +13,17 @@ const getCategories = async () => {
   return data;
 };
 
-// const getProductsPagination = async (page: string, size: string) => {
-//   const res = await fetch(
-//     `${process.env.NEXT_PUBLIC_APP_URL}/api/products/pagination?page=${page}&size=${size}`,
-//     {
-//       next: { tags: ["products"] },
-//     }
-//   );
-//   const data = await res.json();
-//   return data;
-// };
-
 export default async function ProductsPage({
-  searchParams: pageParams,
+  searchParams,
 }: {
   searchParams: { page: string; size: string };
 }) {
   const categories = await getCategories();
 
-  const data = await getProductsPagination(pageParams.page, pageParams.size);
+  const data = await getProductsPagination(
+    searchParams.page,
+    searchParams.size
+  );
 
   return (
     <>
@@ -41,7 +33,11 @@ export default async function ProductsPage({
         <div className="border-2 border-gray-200 p-3 rounded-md">
           <ProductsTable tableBody={data?.data as any} />
         </div>
-        <PaginationButtons pageCount={data?.count as number} url="products" />
+        <PaginationButtons
+          pageCount={data?.count as number}
+          currentPage={searchParams.page}
+          url="products"
+        />
       </div>
     </>
   );
