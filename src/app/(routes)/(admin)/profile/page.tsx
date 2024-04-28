@@ -29,6 +29,13 @@ export default function ProfilePage() {
   const [isPandingGet, startTransitionGet] = useTransition();
   const [save, setSave] = useState<boolean>(false);
   const [image, setImage] = useState<string>("");
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   const form = useForm<ProfileFormTypes>({
     defaultValues: {
