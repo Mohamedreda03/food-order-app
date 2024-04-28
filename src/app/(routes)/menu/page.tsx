@@ -1,8 +1,8 @@
 import { getAllCategories } from "@/actions/categories/get-all-categories";
 import CategoryMenuItem from "@/components/category-menu-item";
 import { Separator } from "@/components/ui/separator";
+import { CartItem } from "@/hooks/use-cart";
 import { cn } from "@/lib/utils";
-import { CartItem } from "@/rtk/features/cart/cartSlice";
 import { Category } from "@prisma/client";
 
 interface CategoryType extends Category {
@@ -28,7 +28,7 @@ const Page = async () => {
                 <div>
                   <CategoryMenuItem
                     key={category.id}
-                    items={category.products}
+                    items={category.products as any}
                   />
                 </div>
               </div>

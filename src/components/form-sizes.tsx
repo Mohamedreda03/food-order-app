@@ -2,22 +2,12 @@
 
 import { Size } from "@prisma/client";
 import { Button } from "./ui/button";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import SizeAlert from "./models/size-alert";
 import { fCurrency } from "@/lib/utils";
-import { useForm } from "react-hook-form";
-import { SizeFormTypes } from "@/types/schema";
 import toast from "react-hot-toast";
-import {
-  useCreateSizeMutation,
-  useDeleteSizeMutation,
-} from "@/rtk/features/products/productsApislice";
 import { Trash } from "lucide-react";
 import DeleteAlert from "./models/delete-alert";
-import { useParams } from "next/navigation";
-import { set } from "date-fns";
-import { createSize } from "@/actions/sizes/create-size";
-import { updateSize } from "@/actions/sizes/update-size";
 import UpdateSizeAlert from "./models/update-size-alert";
 import { deleteSize } from "@/actions/sizes/delete-size";
 

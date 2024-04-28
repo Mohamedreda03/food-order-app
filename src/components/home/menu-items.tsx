@@ -1,6 +1,5 @@
 import CardItem from "../card-item";
-import LoadingCard from "../loading-card";
-import type { CartItem as CartItemType } from "@/rtk/features/cart/cartSlice";
+import { Product } from "@prisma/client";
 
 const getBestSellersItems = async () => {
   const res = await fetch(
@@ -21,7 +20,7 @@ const MenuItems = async () => {
         BEST SELLERS
       </h3>
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
-        {data?.data?.map((item: CartItemType) => (
+        {data?.data?.map((item: Product) => (
           <CardItem item={item} key={item?.id} />
         ))}
       </div>

@@ -1,11 +1,4 @@
-import { Category, Order, User } from "@prisma/client";
-
-import DeleteAlert from "../models/delete-alert";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useDeleteCategoryMutation } from "@/rtk/features/categories/categoriesApiSlice";
-import Image from "next/image";
-import { useDeleteOrderMutation } from "@/rtk/features/orders/orderSlice";
+import { Order, User } from "@prisma/client";
 import { cn, fCurrency } from "@/lib/utils";
 import OrderTableActions from "../order-table-actions";
 

@@ -1,14 +1,9 @@
-//"use client";
-
 import Link from "next/link";
 import NavLinks from "./nav-links";
 import { Button } from "../ui/button";
 import MobileMenu from "./mobile-menu";
-//import { signOut, useSession } from "next-auth/react";
-//import { useGetAuthUserQuery } from "@/rtk/features/users/usersApiSlice";
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import AuthProfileButton from "../auth/auth-profile-button";
-import { ShoppingBag } from "lucide-react";
 import CartNav from "./cart-nav";
 
 export default async function Header() {
