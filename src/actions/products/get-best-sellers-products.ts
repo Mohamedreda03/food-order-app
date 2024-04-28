@@ -3,11 +3,13 @@
 import { db } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 
-export const getNewProducts = unstable_cache(
+export const getBestSellersProducts = unstable_cache(
   async () => {
     try {
       const data = await db.product.findMany({
-        take: 8,
+        where: {
+          best_seller: true,
+        },
         orderBy: { createdAt: "desc" },
         include: {
           sizes: true,

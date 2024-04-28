@@ -4,21 +4,14 @@ import PaginationButtons from "@/components/pagination-buttons";
 // import { getProductsPagination } from "@/actions/get-products-pagination";
 import CreateProductAlertFrom from "./_components/create-product-alert-from";
 import { getProductsPagination } from "@/actions/products/get-products-pagination";
-
-const getCategories = async () => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/categories`, {
-    next: { tags: ["categories", "products"] },
-  });
-  const data = await res.json();
-  return data;
-};
+import { getAllCategories } from "@/actions/categories/get-all-categories";
 
 export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: { page: string; size: string };
 }) {
-  const categories = await getCategories();
+  const categories = await getAllCategories();
 
   const data = await getProductsPagination(
     searchParams.page,
