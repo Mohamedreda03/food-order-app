@@ -15,7 +15,7 @@ export const getUserProfile = unstable_cache(
 
       const data = await db.user.findFirst({
         where: {
-          id: session.user?.id!,
+          email: session.user?.email,
         },
         select: {
           name: true,
