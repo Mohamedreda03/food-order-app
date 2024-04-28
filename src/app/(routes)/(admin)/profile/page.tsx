@@ -31,12 +31,6 @@ export default function ProfilePage() {
   const [image, setImage] = useState<string>("");
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) return null;
-
   const form = useForm<ProfileFormTypes>({
     defaultValues: {
       name: "",
@@ -96,6 +90,12 @@ export default function ProfilePage() {
     form.setValue("image", result.info.secure_url);
     setImage(result.info.secure_url);
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   if (isPandingGet) {
     return <LoadingProfile />;
