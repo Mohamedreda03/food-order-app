@@ -29,7 +29,6 @@ export default function ProfilePage() {
   const [isPandingGet, startTransitionGet] = useTransition();
   const [save, setSave] = useState<boolean>(false);
   const [image, setImage] = useState<string>("");
-  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   const form = useForm<ProfileFormTypes>({
     defaultValues: {
@@ -47,29 +46,30 @@ export default function ProfilePage() {
   const { data } = useSession();
 
   useEffect(() => {
-    const getUserProfileData = async () => {
-      startTransitionGet(async () => {
-        try {
-          const data: any = await getUserProfile();
-
-          form.setValue("name", data?.data?.name);
-          form.setValue("email", data?.data?.email);
-          form.setValue("post_code", data?.data?.post_code);
-          form.setValue("street_address", data?.data?.street_address);
-          form.setValue("tel", data?.data?.tel);
-          form.setValue("city", data?.data?.city);
-          form.setValue("country", data?.data?.country);
-          if (data?.data?.image) {
-            form.setValue("image", data?.data?.image);
-            setImage(data?.data?.image);
-          }
-        } catch (error) {
-          console.log("getUserProfileData on Profile page:", error);
-        }
-      });
-    };
     getUserProfileData();
-  }, [form, data, image]);
+  }, []);
+
+  const getUserProfileData = async () => {
+    startTransitionGet(async () => {
+      try {
+        const data: any = await getUserProfile();
+
+        form.setValue("name", data?.data?.name);
+        form.setValue("email", data?.data?.email);
+        form.setValue("post_code", data?.data?.post_code);
+        form.setValue("street_address", data?.data?.street_address);
+        form.setValue("tel", data?.data?.tel);
+        form.setValue("city", data?.data?.city);
+        form.setValue("country", data?.data?.country);
+        if (data?.data?.image) {
+          form.setValue("image", data?.data?.image);
+          setImage(data?.data?.image);
+        }
+      } catch (error) {
+        console.log("getUserProfileData on Profile page:", error);
+      }
+    });
+  };
 
   const onSubmit = async (data: ProfileFormTypes) => {
     startTransitionUpdate(async () => {
@@ -90,12 +90,6 @@ export default function ProfilePage() {
     form.setValue("image", result.info.secure_url);
     setImage(result.info.secure_url);
   };
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) return null;
 
   if (isPandingGet) {
     return <LoadingProfile />;
