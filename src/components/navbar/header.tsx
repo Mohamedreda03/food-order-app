@@ -25,9 +25,14 @@ export default async function Header() {
           {session ? (
             <AuthProfileButton />
           ) : (
-            <Link href="/sign-in">
-              <Button>Login</Button>
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/sign-in">
+                <Button variant="outline">Login</Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button>Register</Button>
+              </Link>
+            </div>
           )}
           <div className="flex md:hidden items-center justify-center">
             <MobileMenu />

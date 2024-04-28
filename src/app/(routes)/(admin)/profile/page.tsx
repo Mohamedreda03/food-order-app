@@ -1,8 +1,6 @@
 "use client";
 
-import Loading from "@/components/Loading";
 import Image from "next/image";
-import { CldUploadWidget } from "next-cloudinary";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -24,15 +22,13 @@ import UploadWidget from "@/components/upload-widget";
 import { updateUserProfile } from "@/actions/profile/update-user-profile";
 import { getUserProfile } from "@/actions/profile/get-user-profile";
 import LoadingProfile from "@/components/profile/loading-profile";
+import { useSession } from "next-auth/react";
 
 export default function ProfilePage() {
   const [isPandingUpdate, startTransitionUpdate] = useTransition();
   const [isPandingGet, startTransitionGet] = useTransition();
   const [save, setSave] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [image, setImage] = useState<string>(
-    "https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg?w=740&t=st=1713206862~exp=1713207462~hmac=47a0695bfb0f0f22aef2f0d694e4c8a58b888b3539a0ae06c3a4611fd5b9126e"
-  );
+  const { data } = useSession();
 
   const form = useForm<ProfileFormTypes>({
     defaultValues: {
@@ -60,10 +56,6 @@ export default function ProfilePage() {
           form.setValue("tel", data?.data?.tel);
           form.setValue("city", data?.data?.city);
           form.setValue("country", data?.data?.country);
-          if (data?.data?.image) {
-            form.setValue("image", data?.data?.image);
-            setImage(data?.data?.image);
-          }
         } catch (error) {
           console.log("getUserProfileData on Profile page:", error);
         }
@@ -90,7 +82,6 @@ export default function ProfilePage() {
 
   const handleUploadSuccess = (result: any) => {
     form.setValue("image", result.info.secure_url);
-    setImage(result.info.secure_url);
   };
 
   if (isPandingGet) {
@@ -100,7 +91,7 @@ export default function ProfilePage() {
   return (
     <>
       <div className="py-20 wrapper">
-        {!isAdmin && (
+        {!data?.user.isAdmin && (
           <h2 className="flex items-center justify-center text-5xl font-medium text-primary mb-6">
             Profile
           </h2>
