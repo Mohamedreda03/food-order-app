@@ -28,7 +28,7 @@ export default function ProfilePage() {
   const [isPandingUpdate, startTransitionUpdate] = useTransition();
   const [isPandingGet, startTransitionGet] = useTransition();
   const [save, setSave] = useState<boolean>(false);
-  const { data } = useSession();
+  const [image, setImage] = useState<string>("");
 
   const form = useForm<ProfileFormTypes>({
     defaultValues: {
@@ -43,6 +43,8 @@ export default function ProfilePage() {
     },
   });
 
+  const { data } = useSession();
+
   useEffect(() => {
     const getUserProfileData = async () => {
       startTransitionGet(async () => {
@@ -56,13 +58,17 @@ export default function ProfilePage() {
           form.setValue("tel", data?.data?.tel);
           form.setValue("city", data?.data?.city);
           form.setValue("country", data?.data?.country);
+          if (data?.data?.image) {
+            form.setValue("image", data?.data?.image);
+            setImage(data?.data?.image);
+          }
         } catch (error) {
           console.log("getUserProfileData on Profile page:", error);
         }
       });
     };
     getUserProfileData();
-  }, [form]);
+  }, [form, data, image]);
 
   const onSubmit = async (data: ProfileFormTypes) => {
     startTransitionUpdate(async () => {
@@ -82,6 +88,7 @@ export default function ProfilePage() {
 
   const handleUploadSuccess = (result: any) => {
     form.setValue("image", result.info.secure_url);
+    setImage(result.info.secure_url);
   };
 
   if (isPandingGet) {
@@ -91,7 +98,7 @@ export default function ProfilePage() {
   return (
     <>
       <div className="py-20 wrapper">
-        {!data?.user.isAdmin && (
+        {!data?.user?.isAdmin && (
           <h2 className="flex items-center justify-center text-5xl font-medium text-primary mb-6">
             Profile
           </h2>
@@ -103,9 +110,9 @@ export default function ProfilePage() {
         )}
         <div className="flex gap-6 flex-col md:flex-row">
           <div className="flex-[0.4] flex flex-col items-center">
-            {form.getValues("image") ? (
+            {image ? (
               <Image
-                src={form.getValues("image") as string}
+                src={image}
                 priority={true}
                 width={180}
                 height={200}
