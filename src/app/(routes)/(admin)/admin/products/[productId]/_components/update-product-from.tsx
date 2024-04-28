@@ -23,10 +23,6 @@ import {
 } from "@/components/ui/select";
 import { Category, Product, Size } from "@prisma/client";
 import FormSizes from "@/components/form-sizes";
-import {
-  useGetSizesQuery,
-  useUpdateProductMutation,
-} from "@/rtk/features/products/productsApislice";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import UploadWidget from "@/components/upload-widget";
