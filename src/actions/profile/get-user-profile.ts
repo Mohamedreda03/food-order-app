@@ -13,10 +13,6 @@ export const getUserProfile = unstable_cache(
         return { error: "Unauthorized" };
       }
 
-      if (!session.user?.isAdmin) {
-        return { error: "you should be admin." };
-      }
-
       const data = await db.user.findFirst({
         where: {
           id: session.user?.id!,
@@ -40,7 +36,7 @@ export const getUserProfile = unstable_cache(
 
       return { data };
     } catch (error) {
-      console.log("GET ALL CATEGORIES ACTION:", error);
+      console.log("GET PROFILE  ACTION:", error);
     }
   },
   ["profile"],

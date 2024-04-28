@@ -3,7 +3,7 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { ProfileFormTypes } from "@/types/schema";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export const updateUserProfile = async (data: ProfileFormTypes) => {
   try {
@@ -13,13 +13,9 @@ export const updateUserProfile = async (data: ProfileFormTypes) => {
       return { error: "Unauthorized" };
     }
 
-    if (!session.user?.isAdmin) {
-      return { error: "you should be admin." };
-    }
-
     const foundUser = await db.user.findUnique({
       where: {
-        email: session.user?.email!,
+        id: session.user?.id!,
       },
     });
 
@@ -29,15 +25,17 @@ export const updateUserProfile = async (data: ProfileFormTypes) => {
 
     const user = await db.user.update({
       where: {
-        id: foundUser.id,
+        id: session?.user?.id,
       },
-      data,
+      data: {
+        ...data,
+      },
     });
 
     revalidateTag("profile");
 
     return { data: user };
   } catch (error) {
-    console.log("GET ALL CATEGORIES ACTION:", error);
+    console.log("UDATE USER PROFILE ACTION:", error);
   }
 };
