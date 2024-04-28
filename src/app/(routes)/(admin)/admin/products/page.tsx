@@ -1,10 +1,10 @@
 import { Separator } from "@/components/ui/separator";
 import ProductsTable from "@/components/tables/table-products";
 import PaginationButtons from "@/components/pagination-buttons";
-// import { getProductsPagination } from "@/actions/get-products-pagination";
 import CreateProductAlertFrom from "./_components/create-product-alert-from";
 import { getProductsPagination } from "@/actions/products/get-products-pagination";
 import { getAllCategories } from "@/actions/categories/get-all-categories";
+import { Category } from "@prisma/client";
 
 export default async function ProductsPage({
   searchParams,
@@ -21,7 +21,7 @@ export default async function ProductsPage({
   return (
     <>
       <div className="wrapper flex flex-col my-14 gap-6 min-h-[600px]">
-        <CreateProductAlertFrom categories={categories?.data} />
+        <CreateProductAlertFrom categories={categories as any} />
         <Separator />
         <div className="border-2 border-gray-200 p-3 rounded-md">
           <ProductsTable tableBody={data?.data as any} />
