@@ -1,17 +1,15 @@
 "use client";
 
-import { Product, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 import { Clipboard, Trash2 } from "lucide-react";
 import DeleteAlert from "../models/delete-alert";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useDeleteProductMutation } from "@/rtk/features/products/productsApislice";
-import { fCurrency } from "@/lib/utils";
-import { format } from "date-fns";
+import { deleteUser } from "@/actions/users/update-user";
 
 interface TableProps {
   tableBody?: User[];
@@ -21,10 +19,9 @@ const tableHead = ["Image", "Name", "Role", "Email", "Actions"];
 
 export default function UsersTable({ tableBody }: TableProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentItem, setCurrentItem] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [isLoading, startTransition] = useTransition();
   const router = useRouter();
-
-  const [deleteProduct, { isLoading }] = useDeleteProductMutation();
 
   const onCopy = (description: string) => {
     navigator.clipboard.writeText(description);
@@ -32,15 +29,17 @@ export default function UsersTable({ tableBody }: TableProps) {
   };
 
   const onDelete = async () => {
-    try {
-      await deleteProduct(currentItem as string);
-    } catch (error) {
-      console.log("onDelete on Products page:", error);
-    } finally {
-      router.refresh();
-      setIsOpen(false);
-      toast.success("Category deleted successfully");
-    }
+    startTransition(async () => {
+      try {
+        await deleteUser(currentUser as string);
+      } catch (error) {
+        console.log("onDelete on Products page:", error);
+      } finally {
+        router.refresh();
+        setIsOpen(false);
+        toast.success("Category deleted successfully");
+      }
+    });
   };
 
   return (
@@ -115,7 +114,7 @@ export default function UsersTable({ tableBody }: TableProps) {
                     <Button
                       onClick={() => {
                         setIsOpen(true);
-                        setCurrentItem(item.id);
+                        setCurrentUser(item.id);
                       }}
                       className="px-2"
                       variant="destructive"

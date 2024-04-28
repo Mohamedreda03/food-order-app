@@ -7,11 +7,13 @@ import { useState } from "react";
 export default function PaginationButtons({
   url,
   pageCount,
+  currentPage,
 }: {
   pageCount: number;
+  currentPage: string | number;
   url: string;
 }) {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(Number(currentPage) || 1);
   const size = 10;
 
   const router = useRouter();

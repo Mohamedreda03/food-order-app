@@ -1,3 +1,4 @@
+import { createSize } from "@/actions/sizes/create-size";
 import Alert from "../alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,30 +11,49 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SizeFormTypes } from "@/types/schema";
-import { UseFormReturn } from "react-hook-form";
+import { useTransition } from "react";
+import { UseFormReturn, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 interface DeleteAlertProps {
   isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
   onClose: () => void;
-  isLoading?: boolean;
-  onSubmit: (data: SizeFormTypes) => void;
-  form: UseFormReturn<{ name: string; price: number }, any, undefined>;
+  productId: string;
 }
 
 export default function SizeAlert({
   isOpen,
   onClose,
-  isLoading,
-  onSubmit,
-  form,
+  setIsOpen,
+  productId,
 }: DeleteAlertProps) {
+  const [isLoading, startCreateSizeTransition] = useTransition();
+
+  const form = useForm<SizeFormTypes>({
+    defaultValues: {
+      name: "",
+      price: 0,
+    },
+  });
+
+  const onSubmit = async (data: SizeFormTypes) => {
+    startCreateSizeTransition(async () => {
+      try {
+        await createSize(productId, data);
+        toast.success("Size created successfully");
+        setIsOpen(false);
+        form.reset();
+      } catch (error) {
+        console.log("onSubmit size page:", error);
+      }
+    });
+  };
+
   return (
     <Alert title="Create Size" isOpen={isOpen} onClose={onClose}>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-3"
-        >
+        <form className="flex flex-col gap-3">
           <div className="flex items-center justify-center gap-3">
             <FormField
               control={form.control}
@@ -72,7 +92,15 @@ export default function SizeAlert({
               )}
             />
           </div>
-          <Button disabled={isLoading} type="submit" className="w-full">
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              onSubmit(form.getValues());
+            }}
+            disabled={isLoading}
+            type="button"
+            className="w-full"
+          >
             Create Size
           </Button>
         </form>

@@ -1,13 +1,15 @@
+"use client";
+
 import { Category } from "@prisma/client";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 import { Clipboard, Trash2 } from "lucide-react";
 import DeleteAlert from "../models/delete-alert";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { useDeleteCategoryMutation } from "@/rtk/features/categories/categoriesApiSlice";
 import Image from "next/image";
+import { deleteCategory } from "@/actions/categories/delete-category";
 
 interface TableProps {
   tableBody?: Category[];
@@ -19,8 +21,7 @@ export default function CategoriesTable({ tableBody }: TableProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<string | null>(null);
   const router = useRouter();
-
-  const [deleteCategory] = useDeleteCategoryMutation();
+  const [isLoading, startTransition] = useTransition();
 
   const onCopy = (description: string) => {
     navigator.clipboard.writeText(description);
@@ -28,20 +29,23 @@ export default function CategoriesTable({ tableBody }: TableProps) {
   };
 
   const onDelete = async () => {
-    try {
-      const res: any = await deleteCategory(currentItem);
+    startTransition(async () => {
+      try {
+        const res = await deleteCategory(currentItem as string);
 
-      if (res?.error) {
+        if (res?.error) {
+          setIsOpen(false);
+          toast.error("Category has products, can't delete.");
+          return;
+        }
+        router.refresh();
         setIsOpen(false);
-        return toast.error("Category has products, can't delete.");
-      }
-      router.refresh();
-      setIsOpen(false);
 
-      toast.success("Category deleted successfully");
-    } catch (error) {
-      console.log("Category DELETE:", error);
-    }
+        toast.success("Category deleted successfully");
+      } catch (error) {
+        console.log("Category DELETE:", error);
+      }
+    });
   };
 
   return (
@@ -52,6 +56,7 @@ export default function CategoriesTable({ tableBody }: TableProps) {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onDelete={onDelete}
+        isLoading={isLoading}
       />
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">

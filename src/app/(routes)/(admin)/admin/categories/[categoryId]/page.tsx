@@ -11,44 +11,59 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { CategoryFormTypes, CategorySchema } from "@/types/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import {
-  useGetCategoryQuery,
-  useUpdateCategoryMutation,
-} from "@/rtk/features/categories/categoriesApiSlice";
 import LoadingCategoryPage from "@/components/loading-pages/loading-category-page";
 import UploadWidget from "@/components/upload-widget";
+import { getCategory } from "@/actions/categories/get-category";
+import { updateCategory } from "@/actions/categories/update-category";
 
 export default function SingleCategoryPage() {
   const [image, setImage] = useState<string | null>(null);
 
-  const params = useParams();
+  const [isLoading, startTransition] = useTransition();
+  const [isLoadingUpdate, startTransitionUpdate] = useTransition();
 
-  const [updateCategory, { isLoading: isUpdateCategoryLoading }] =
-    useUpdateCategoryMutation();
+  const params: { categoryId: string } = useParams();
 
-  const {
-    data: category,
-    isLoading,
-    isSuccess,
-  } = useGetCategoryQuery(params.categoryId);
+  useEffect(() => {
+    getCategoryData();
+  }, []);
+
+  const getCategoryData = async () => {
+    startTransition(async () => {
+      try {
+        const data: any = await getCategory(params.categoryId as string);
+
+        form.setValue("name", data?.name);
+        form.setValue("image", data?.image);
+      } catch (error) {
+        console.log("GET CATEGORY ACTION:", error);
+      }
+    });
+  };
 
   const form = useForm<CategoryFormTypes>({
     resolver: zodResolver(CategorySchema),
     defaultValues: {
-      name: category?.name || "",
-      image: category?.image || "",
+      name: "",
+      image: "",
     },
   });
 
   const onSubmit = async (data: any) => {
-    await updateCategory({ id: params.categoryId, data });
-    toast.success("Category updated successfully");
+    startTransitionUpdate(async () => {
+      try {
+        await updateCategory(params.categoryId, data);
+        toast.success("Category updated successfully");
+      } catch (error) {
+        console.log("UPDATE CATEGORY ACTION:", error);
+      }
+    });
   };
 
   const handleUploadSuccess = (result: any) => {
@@ -99,7 +114,7 @@ export default function SingleCategoryPage() {
                       <FormControl>
                         <Input
                           className="w-[400px]"
-                          disabled={isUpdateCategoryLoading}
+                          disabled={isLoadingUpdate}
                           placeholder="category name"
                           {...field}
                         />
@@ -109,7 +124,7 @@ export default function SingleCategoryPage() {
                   )}
                 />
                 <Button
-                  disabled={isUpdateCategoryLoading}
+                  disabled={isLoadingUpdate}
                   type="submit"
                   className="w-[200px]"
                 >

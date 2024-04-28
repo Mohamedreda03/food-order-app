@@ -22,11 +22,6 @@ export default function LoadingProfile() {
                   <div className="h-5 w-32 bg-gray-200 rounded-md" />
                   <div className="h-10 bg-gray-200 rounded-md" />
                 </div>
-                <div className="flex flex-col gap-3">
-                  <div className="h-5 w-32 bg-gray-200 rounded-md" />
-                  <div className="h-10 bg-gray-200 rounded-md" />
-                </div>
-
                 <div className="flex w-full gap-4">
                   <div className="flex flex-col gap-3 w-full">
                     <div className="h-5 w-32 bg-gray-200 rounded-md" />
@@ -37,6 +32,11 @@ export default function LoadingProfile() {
                     <div className="h-10 bg-gray-200 rounded-md" />
                   </div>
                 </div>
+                <div className="flex flex-col gap-3">
+                  <div className="h-5 w-32 bg-gray-200 rounded-md" />
+                  <div className="h-10 bg-gray-200 rounded-md" />
+                </div>
+
                 <div className="w-full sm:w-[150px]">
                   <div className="h-10 bg-gray-200 rounded-md" />
                 </div>

@@ -18,30 +18,22 @@ import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { ProfileFormTypes } from "@/types/schema";
 
-import axios from "axios";
 import toast from "react-hot-toast";
-import { useSession } from "next-auth/react";
-import {
-  useGetAuthUserQuery,
-  useUpdateAuthUserMutation,
-} from "@/rtk/features/users/usersApiSlice";
-import LoadingProfile from "@/components/profile/loading-profile";
+
 import UploadWidget from "@/components/upload-widget";
+import { updateUserProfile } from "@/actions/profile/update-user-profile";
+import { getUserProfile } from "@/actions/profile/get-user-profile";
+import LoadingProfile from "@/components/profile/loading-profile";
 
 export default function ProfilePage() {
-  const [isPanding, startTransition] = useTransition();
+  const [isPandingUpdate, startTransitionUpdate] = useTransition();
+  const [isPandingGet, startTransitionGet] = useTransition();
   const [save, setSave] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [image, setImage] = useState<string>(
     "https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg?w=740&t=st=1713206862~exp=1713207462~hmac=47a0695bfb0f0f22aef2f0d694e4c8a58b888b3539a0ae06c3a4611fd5b9126e"
   );
 
-  const [updateUser, { isLoading }] = useUpdateAuthUserMutation();
-  const {
-    data: user,
-    isSuccess,
-    isLoading: isGetAuthUserLoading,
-  } = useGetAuthUserQuery({});
   const form = useForm<ProfileFormTypes>({
     defaultValues: {
       name: "",
@@ -56,25 +48,35 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (isSuccess) {
-      form.setValue("name", user?.user.name);
-      form.setValue("email", user?.user.email);
-      form.setValue("post_code", user?.user.post_code);
-      form.setValue("street_address", user?.user.street_address);
-      form.setValue("tel", user?.user.tel);
-      form.setValue("city", user?.user.city);
-      form.setValue("country", user?.user.country);
-      if (user?.user.image) {
-        form.setValue("image", user?.user.image);
-        setImage(user?.user.image);
+    getUserProfileData();
+  }, []);
+
+  const getUserProfileData = async () => {
+    startTransitionGet(async () => {
+      try {
+        const data: any = await getUserProfile();
+
+        form.setValue("name", data?.data?.name);
+        form.setValue("email", data?.data?.email);
+        form.setValue("post_code", data?.data?.post_code);
+        form.setValue("street_address", data?.data?.street_address);
+        form.setValue("tel", data?.data?.tel);
+        form.setValue("city", data?.data?.city);
+        form.setValue("country", data?.data?.country);
+        if (data?.data?.image) {
+          form.setValue("image", data?.data?.image);
+          setImage(data?.data?.image);
+        }
+      } catch (error) {
+        console.log("getUserProfileData on Profile page:", error);
       }
-    }
-  }, [isSuccess]);
+    });
+  };
 
   const onSubmit = async (data: ProfileFormTypes) => {
-    startTransition(async () => {
+    startTransitionUpdate(async () => {
       try {
-        await updateUser(data);
+        await updateUserProfile(data);
       } catch (error) {
         console.log("onSubmit on Profile page:", error);
       } finally {
@@ -92,13 +94,12 @@ export default function ProfilePage() {
     setImage(result.info.secure_url);
   };
 
-  if (isGetAuthUserLoading) {
+  if (isPandingGet) {
     return <LoadingProfile />;
   }
 
   return (
     <>
-      {(isPanding || isLoading) && <Loading />}
       <div className="py-20 wrapper">
         {!isAdmin && (
           <h2 className="flex items-center justify-center text-5xl font-medium text-primary mb-6">
@@ -145,7 +146,7 @@ export default function ProfilePage() {
                         <FormLabel>Username</FormLabel>
                         <FormControl>
                           <Input
-                            disabled={isPanding}
+                            disabled={isPandingUpdate}
                             placeholder="user name"
                             {...field}
                           />
@@ -181,7 +182,7 @@ export default function ProfilePage() {
                         <FormLabel>Phone</FormLabel>
                         <FormControl>
                           <Input
-                            disabled={isPanding}
+                            disabled={isPandingUpdate}
                             placeholder="phone number"
                             {...field}
                           />
@@ -199,7 +200,7 @@ export default function ProfilePage() {
                         <FormLabel>Street address</FormLabel>
                         <FormControl>
                           <Input
-                            disabled={isPanding}
+                            disabled={isPandingUpdate}
                             placeholder="street address"
                             {...field}
                           />
@@ -218,7 +219,7 @@ export default function ProfilePage() {
                           <FormLabel>Post code</FormLabel>
                           <FormControl>
                             <Input
-                              disabled={isPanding}
+                              disabled={isPandingUpdate}
                               placeholder="post code"
                               {...field}
                             />
@@ -235,7 +236,7 @@ export default function ProfilePage() {
                           <FormLabel>City</FormLabel>
                           <FormControl>
                             <Input
-                              disabled={isPanding}
+                              disabled={isPandingUpdate}
                               placeholder="phone number"
                               {...field}
                             />
@@ -253,7 +254,7 @@ export default function ProfilePage() {
                         <FormLabel>Country</FormLabel>
                         <FormControl>
                           <Input
-                            disabled={isPanding}
+                            disabled={isPandingUpdate}
                             placeholder="country"
                             {...field}
                           />
@@ -264,7 +265,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <Button
-                  disabled={isPanding}
+                  disabled={isPandingUpdate}
                   type="submit"
                   className="w-full sm:w-[150px]"
                 >

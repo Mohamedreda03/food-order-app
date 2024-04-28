@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -8,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { ProductFormTypes } from "@/types/schema";
 
@@ -30,6 +32,8 @@ import Image from "next/image";
 import UploadWidget from "@/components/upload-widget";
 import toast from "react-hot-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { getProductSizes } from "@/actions/sizes/get-product-sizes";
+import { updateProduct } from "@/actions/products/update-product";
 
 /**
  * () get product
@@ -52,8 +56,24 @@ export default function UpdateProductFrom({
 }: UpdateProductFromProps) {
   const [image, setImage] = useState<string | null>(null);
   const [save, setSave] = useState<boolean>(false);
-  const { data: sizes } = useGetSizesQuery({ id: product?.id });
-  const [updateProduct, { isLoading }] = useUpdateProductMutation();
+  const [sizes, setSizes] = useState<Size[]>([]);
+
+  const [isPeindingGetSizes, startTransactionGetSizes] = useTransition();
+
+  useEffect(() => {
+    handleGetSizes();
+  }, [product]);
+
+  const handleGetSizes = async () => {
+    startTransactionGetSizes(async () => {
+      try {
+        const data = await getProductSizes(product?.id);
+        setSizes(data as Size[]);
+      } catch (error) {
+        console.log("handleGetSizes on Profile page:", error);
+      }
+    });
+  };
 
   const form = useForm<ProductFormTypes>({
     defaultValues: {
@@ -70,11 +90,11 @@ export default function UpdateProductFrom({
 
   const onSubmit = async (data: ProductFormTypes) => {
     try {
-      await updateProduct({ id: product?.id, data });
+      await updateProduct(product?.id, data);
     } catch (error) {
       console.log("onSubmit on Profile page:", error);
     } finally {
-      toast.success("Profile updated successfully");
+      toast.success("Product updated successfully");
       setSave(true);
       setTimeout(() => {
         setSave(false);
@@ -128,7 +148,7 @@ export default function UpdateProductFrom({
                       <FormLabel>Item name</FormLabel>
                       <FormControl>
                         <Input
-                          disabled={isLoading}
+                          disabled={isPeindingGetSizes}
                           placeholder="user name"
                           {...field}
                         />
@@ -146,7 +166,7 @@ export default function UpdateProductFrom({
                         <FormLabel>Price</FormLabel>
                         <FormControl>
                           <Input
-                            disabled={isLoading}
+                            disabled={isPeindingGetSizes}
                             placeholder="item price"
                             {...field}
                           />
@@ -163,7 +183,7 @@ export default function UpdateProductFrom({
                       <FormItem className="w-full">
                         <FormLabel>Category</FormLabel>
                         <Select
-                          disabled={isLoading}
+                          disabled={isPeindingGetSizes}
                           onValueChange={field.onChange}
                           defaultValue={product?.categoryId}
                           value={field.value}
@@ -204,7 +224,8 @@ export default function UpdateProductFrom({
                           <FormLabel>Description</FormLabel>
                           <FormControl>
                             <Textarea
-                              disabled={isLoading}
+                              className="min-h-[200px]"
+                              disabled={isPeindingGetSizes}
                               {...field}
                               placeholder="Type Description for this item."
                             />
@@ -239,7 +260,7 @@ export default function UpdateProductFrom({
                 </div>
               </div>
               <Button
-                disabled={isLoading}
+                disabled={isPeindingGetSizes}
                 type="submit"
                 className="w-full sm:w-[150px]"
               >

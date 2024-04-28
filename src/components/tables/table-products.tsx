@@ -6,20 +6,20 @@ import toast from "react-hot-toast";
 import { Button } from "../ui/button";
 import { Clipboard, Trash2 } from "lucide-react";
 import DeleteAlert from "../models/delete-alert";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { useDeleteProductMutation } from "@/rtk/features/products/productsApislice";
 
 import { format } from "date-fns";
 import { fCurrency } from "@/lib/utils";
+import { deleteProduct } from "@/actions/products/delete-product";
 
 interface TableProps {
   tableBody?: ProductType[];
 }
 
 interface ProductType extends Product {
-  user: User;
+  users: User[];
   category: Category;
 }
 
@@ -33,11 +33,10 @@ const tableHead = [
 ];
 
 export default function ProductsTable({ tableBody }: TableProps) {
+  const [isPeinding, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<string | null>(null);
   const router = useRouter();
-
-  const [deleteProduct, { isLoading }] = useDeleteProductMutation();
 
   const onCopy = (description: string) => {
     navigator.clipboard.writeText(description);
@@ -45,15 +44,17 @@ export default function ProductsTable({ tableBody }: TableProps) {
   };
 
   const onDelete = async () => {
-    try {
-      await deleteProduct(currentItem as string);
-    } catch (error) {
-      console.log("onDelete on Products page:", error);
-    } finally {
-      router.refresh();
-      setIsOpen(false);
-      toast.success("Category deleted successfully");
-    }
+    startTransition(async () => {
+      try {
+        await deleteProduct(currentItem as string);
+      } catch (error) {
+        console.log("onDelete on Products page:", error);
+      } finally {
+        router.refresh();
+        setIsOpen(false);
+        toast.success("Category deleted successfully");
+      }
+    });
   };
 
   return (
@@ -64,7 +65,7 @@ export default function ProductsTable({ tableBody }: TableProps) {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onDelete={onDelete}
-        isLoading={isLoading}
+        isLoading={isPeinding}
       />
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">

@@ -1,49 +1,31 @@
-"use client";
-
-import Loading from "@/components/Loading";
-import Image from "next/image";
-import { CldUploadWidget } from "next-cloudinary";
-
-import { useEffect, useState } from "react";
-import { ProductFormTypes } from "@/types/schema";
-
-import LoadingProfile from "@/components/profile/loading-profile";
-import {
-  useGetProductQuery,
-  useGetSizesQuery,
-  useUpdateProductMutation,
-} from "@/rtk/features/products/productsApislice";
-import { useParams } from "next/navigation";
-import { useGetAllCategoriesQuery } from "@/rtk/features/categories/categoriesApiSlice";
-
 import UpdateProductFrom from "./_components/update-product-from";
-import { useSession } from "next-auth/react";
+import { getAllCategories } from "@/actions/categories/get-all-categories";
+import { getProduct } from "@/actions/products/get-product";
+import { auth } from "@/auth";
+import { headers } from "next/headers";
 
-export default function ProfilePage() {
-  const { data } = useSession();
-  const params = useParams();
-
-  const { data: categories } = useGetAllCategoriesQuery({});
-
-  const { data: product, isLoading: isGetProductLoading } = useGetProductQuery(
-    params.productId
-  );
-
-  if (isGetProductLoading) {
-    return <LoadingProfile />;
-  }
+export default async function ProfilePage({
+  params,
+}: {
+  params: { productId: string };
+}) {
+  const session = await auth();
+  const categories = await getAllCategories();
+  const product = await getProduct(params.productId);
 
   return (
     <>
-      {isGetProductLoading && <Loading />}
       <div className="py-20 wrapper flex flex-col">
-        {!data?.user.isAdmin && (
+        {!session?.user?.isAdmin && (
           <h2 className="flex items-center justify-center text-5xl font-medium text-primary mb-6">
             Profile
           </h2>
         )}
 
-        <UpdateProductFrom categories={categories?.data} product={product} />
+        <UpdateProductFrom
+          categories={categories?.data as any}
+          product={product as any}
+        />
       </div>
     </>
   );

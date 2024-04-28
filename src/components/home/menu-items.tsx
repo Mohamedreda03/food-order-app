@@ -1,12 +1,19 @@
-"use client";
-
-import { useGetProductsFilterQuery } from "@/rtk/features/products/productsApislice";
 import CardItem from "../card-item";
 import LoadingCard from "../loading-card";
 import type { CartItem as CartItemType } from "@/rtk/features/cart/cartSlice";
 
-const MenuItems = () => {
-  const { data } = useGetProductsFilterQuery({});
+const getBestSellersItems = async () => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/products/best-sellers`,
+    { next: { tags: ["products"] } }
+  );
+
+  const data = await res.json();
+  return data;
+};
+
+const MenuItems = async () => {
+  const data = await getBestSellersItems();
 
   return (
     <div className="my-20">
@@ -14,19 +21,9 @@ const MenuItems = () => {
         BEST SELLERS
       </h3>
       <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
-        {data ? (
-          <>
-            {data?.data?.map((item: CartItemType) => (
-              <CardItem item={item} key={item?.id} />
-            ))}
-          </>
-        ) : (
-          <>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <LoadingCard key={i} />
-            ))}
-          </>
-        )}
+        {data?.data?.map((item: CartItemType) => (
+          <CardItem item={item} key={item?.id} />
+        ))}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { Size } from "@prisma/client";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import SizeAlert from "./models/size-alert";
 import { fCurrency } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,10 @@ import { Trash } from "lucide-react";
 import DeleteAlert from "./models/delete-alert";
 import { useParams } from "next/navigation";
 import { set } from "date-fns";
+import { createSize } from "@/actions/sizes/create-size";
+import { updateSize } from "@/actions/sizes/update-size";
+import UpdateSizeAlert from "./models/update-size-alert";
+import { deleteSize } from "@/actions/sizes/delete-size";
 
 interface FormSizesProps {
   sizes: Size[] | null;
@@ -26,47 +30,35 @@ export default function FormSizes({ sizes, id }: FormSizesProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-
-  const [createSize, { isLoading }] = useCreateSizeMutation();
-  const [deleteSize, { isLoading: isDeletedLoading }] = useDeleteSizeMutation();
-
-  const form = useForm<SizeFormTypes>({
-    defaultValues: {
-      name: "",
-      price: 0,
-    },
-  });
-
-  const onSubmit = async (data: SizeFormTypes) => {
-    try {
-      await createSize({ id, data });
-      toast.success("Size created successfully");
-      form.reset();
-      setIsOpen(false);
-    } catch (error) {
-      console.log("onSubmit size page:", error);
-    }
-  };
+  const [currentSize, setCurrentSize] = useState<Size | null>(null);
+  const [isOpenUpdate, setIsOpenUpdate] = useState<boolean>(false);
+  const [isDeletedLoading, startTransaction] = useTransition();
 
   const onDelete = async (sizeId: string) => {
-    try {
-      await deleteSize({ id, sizeId });
-      toast.success("Size created successfully");
-      form.reset();
-      setIsDeleteOpen(false);
-    } catch (error) {
-      console.log("onSubmit size page:", error);
-    }
+    startTransaction(async () => {
+      try {
+        await deleteSize(sizeId);
+        toast.success("Size created successfully");
+        setIsDeleteOpen(false);
+      } catch (error) {
+        console.log("onSubmit size page:", error);
+      }
+    });
   };
 
   return (
     <>
       <SizeAlert
         isOpen={isOpen}
+        setIsOpen={setIsOpen}
         onClose={() => setIsOpen(false)}
-        isLoading={isLoading}
-        onSubmit={onSubmit}
-        form={form}
+        productId={id}
+      />
+      <UpdateSizeAlert
+        currentSize={currentSize as any}
+        isOpen={isOpenUpdate}
+        setIsOpenUpdate={setIsOpenUpdate}
+        onClose={() => setIsOpenUpdate(false)}
       />
       <DeleteAlert
         isOpen={isDeleteOpen}
@@ -89,17 +81,26 @@ export default function FormSizes({ sizes, id }: FormSizesProps) {
                 <p className="text-gray-600">{fCurrency.format(size.price)}</p>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" type="button">
+                <Button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setCurrentSize(size);
+                    setIsOpenUpdate(true);
+                  }}
+                  variant="outline"
+                >
                   Edit
                 </Button>
                 <Button
-                  onClick={() => {
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
                     setIsDeleteOpen(true);
                     setSelectedSize(size.id);
                   }}
                   className="px-2"
                   variant="destructive"
-                  type="button"
                 >
                   <Trash size={20} />
                 </Button>

@@ -1,6 +1,8 @@
 "use client";
+import { auth } from "@/auth";
 import { cn } from "@/lib/utils";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -35,22 +37,12 @@ const AdminMenuLinks: AdminMenuType[] = [
 ];
 
 export default function AdminMenu() {
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    checkAdmin();
-  }, []);
-
-  const checkAdmin = async () => {
-    const { data } = await axios.get("/api/profile");
-
-    setIsAdmin(data?.user?.isAdmin);
-  };
+  const { data } = useSession();
 
   return (
     <div className="max-w-screen-md mx-auto mt-6 flex items-center justify-center">
-      {isAdmin && (
+      {data?.user?.isAdmin && (
         <div className="flex items-center justify-center bg-secondary p-2 rounded-md">
           {AdminMenuLinks.map((link, index) => (
             <Link

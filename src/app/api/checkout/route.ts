@@ -1,7 +1,6 @@
 import { auth } from "@/auth";
+import { CartItem } from "@/hooks/use-cart";
 import { db } from "@/lib/db";
-import { Product } from "@prisma/client";
-import { url } from "inspector";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -15,19 +14,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const orderData = data.items.map((item: any) => {
+  const orderData = data.items.map((item: CartItem) => {
     return {
-      id: item.id,
-      name: item.name,
+      id: item.item.id,
+      name: item.item.name,
       quantity: item.quantity,
       size: item.size,
-      image: item.image,
-      price: item.price,
+      image: item.item.image,
+      price: item.item.price,
     };
   });
 
-  const total = data.items.reduce((acc: number, item: any) => {
-    return acc + item.price * item.quantity;
+  const total = data.items.reduce((acc: number, item: CartItem) => {
+    return acc + item.item.price! * item.quantity;
   }, 0);
 
   const order = await db.order.create({
@@ -42,16 +41,16 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  const line_items = data.items.map((item: any) => {
+  const line_items = data.items.map((item: CartItem) => {
     return {
       price_data: {
         currency: "usd",
         product_data: {
-          name: `${item.name} - ${item.size}`,
-          images: [item.image],
+          name: `${item.item.name} - ${item.size}`,
+          images: [item.item.image],
         },
 
-        unit_amount: item.price * 100,
+        unit_amount: item.item.price! * 100,
       },
       quantity: item.quantity,
     };
@@ -61,8 +60,8 @@ export async function POST(req: NextRequest) {
     payment_method_types: ["card"],
     line_items,
     mode: "payment",
-    success_url: `${req.nextUrl.origin}/checkout/success`,
-    cancel_url: `${req.nextUrl.origin}/checkout/cancel`,
+    success_url: `${req.nextUrl.origin}/cart?success=1`,
+    cancel_url: `${req.nextUrl.origin}/cart?canceled=1`,
     metadata: {
       orderId: order.id,
     },

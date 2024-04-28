@@ -1,23 +1,19 @@
-"use client";
-
-import Loading from "@/components/Loading";
+import { getAllCategories } from "@/actions/categories/get-all-categories";
 import CategoryMenuItem from "@/components/category-menu-item";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { CartItem } from "@/rtk/features/cart/cartSlice";
-import { useGetAllCategoriesQuery } from "@/rtk/features/categories/categoriesApiSlice";
 import { Category } from "@prisma/client";
 
 interface CategoryType extends Category {
   products: CartItem[];
 }
 
-const Page = () => {
-  const { data, isLoading } = useGetAllCategoriesQuery({});
+const Page = async () => {
+  const data: any = await getAllCategories();
 
   return (
     <>
-      {isLoading && <Loading />}
       <div className="wrapper my-20">
         <h1 className="flex items-center justify-center text-6xl font-medium text-primary">
           Categories

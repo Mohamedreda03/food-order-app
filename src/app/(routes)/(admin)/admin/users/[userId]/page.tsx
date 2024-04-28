@@ -1,63 +1,17 @@
-"use client";
-
-import Loading from "@/components/Loading";
-import {
-  useGetAuthUserQuery,
-  useGetUserQuery,
-  useUpdateAuthUserMutation,
-  useUpdateUserMutation,
-} from "@/rtk/features/users/usersApiSlice";
-import LoadingProfile from "@/components/profile/loading-profile";
-import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import UpdateRoleButton from "@/components/admin/update-role-button";
+import { getUser } from "@/actions/users/get-user";
 
-export default function UserPage() {
-  const [save, setSave] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  const { userId } = useParams();
-
-  const { data: user, isLoading } = useGetUserQuery({
-    id: userId,
-  });
-  const [updateUser, { isLoading: isUpdateUserLoading }] =
-    useUpdateUserMutation();
-
-  const onSubmit = async () => {
-    try {
-      const data = {
-        id: userId,
-        data: {
-          isAdmin: isAdmin,
-        },
-      };
-      await updateUser(data);
-      setSave(true);
-
-      setTimeout(() => {
-        setSave(false);
-      }, 3000);
-    } catch (error) {
-      console.log("onSubmit on User page:", error);
-    }
-  };
-
-  if (isLoading) {
-    return <LoadingProfile />;
-  }
+export default async function UserPage({
+  params,
+}: {
+  params: { userId: string };
+}) {
+  const user = await getUser(params.userId);
 
   return (
     <>
-      {isUpdateUserLoading && <Loading />}
       <div className="py-20 wrapper">
-        {save && (
-          <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
-            <p className="font-bold">Saved!</p>
-          </div>
-        )}
         <div className="flex gap-6 flex-col md:flex-row">
           <div className="flex-[0.4] flex flex-col items-center">
             {user?.data?.image ? (
@@ -148,23 +102,7 @@ export default function UserPage() {
                 </tr>
               </tbody>
             </table>
-            <div className="flex items-center space-x-2 border border-gray-200 rounded-md p-2">
-              <Checkbox
-                defaultChecked={user?.data?.isAdmin}
-                onCheckedChange={(e) => {
-                  setIsAdmin(e.valueOf() as boolean);
-                }}
-              />
-              <label
-                htmlFor="terms2"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Is Admin
-              </label>
-            </div>
-            <Button onClick={onSubmit} type="button" className="w-[200px]">
-              Update Role
-            </Button>
+            <UpdateRoleButton userId={params.userId} user={user?.data as any} />
           </div>
           <div className="flex-[1.6]"></div>
         </div>

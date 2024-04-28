@@ -1,4 +1,3 @@
-import { CartItem } from "@/rtk/features/cart/cartSlice";
 import Alert from "../alert";
 import { Button } from "../ui/button";
 import Image from "next/image";
@@ -12,33 +11,57 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fCurrency } from "@/lib/utils";
-
-import { useDispatch } from "react-redux";
-import { addItem } from "@/rtk/features/cart/cartSlice";
 import { Product, Size } from "@prisma/client";
+import useCart from "@/hooks/use-cart";
+import { getProductSizes } from "@/actions/sizes/get-product-sizes";
 
 interface DeleteAlertProps {
   isOpen: boolean;
   onClose: () => void;
-  item: ProductWithSize;
-}
-
-interface ProductWithSize extends Product {
-  sizes?: Size[];
+  item: Product;
+  setIsOpen: (value: boolean) => void;
 }
 
 export default function AddItemCartAlert({
   isOpen,
   onClose,
   item,
+  setIsOpen,
 }: DeleteAlertProps) {
-  const [size, setSize] = useState<string>("small");
+  const [size, setSize] = useState<string | null>(null);
+  const [sizes, setSizes] = useState<Size[] | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
-  const price = (item?.price as number) * quantity;
+  const selectedSize = sizes?.find((s) => s.id === size);
+  const price = (selectedSize?.price as number) * quantity;
 
-  const dispatch = useDispatch();
+  const cart = useCart();
+
+  useEffect(() => {
+    getProductSizesData();
+  }, []);
+
+  const getProductSizesData = async () => {
+    try {
+      const data = await getProductSizes(item.id);
+      setSizes(data as Size[]);
+      if (data && data.length > 0) {
+        setSize(data[0].id as string);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addItemToCart = () => {
+    cart.addItem({
+      item,
+      quantity,
+      size: selectedSize?.name as string,
+    });
+    setIsOpen(false);
+  };
 
   return (
     <Alert title="Add item to cart" isOpen={isOpen} onClose={onClose}>
@@ -63,14 +86,20 @@ export default function AddItemCartAlert({
         <div className="flex flex-col gap-3 w-full">
           <div>
             <Label>Size</Label>
-            <Select onValueChange={(e) => setSize(e.valueOf())}>
+            <Select
+              onValueChange={(e) => setSize(e.valueOf())}
+              defaultValue={size as string}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Select a size" />
+                <SelectValue
+                  defaultValue={size as string}
+                  placeholder="Select a size"
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {item?.sizes?.map((size) => (
-                    <SelectItem key={size.id} value={size.name}>
+                  {sizes?.map((size) => (
+                    <SelectItem key={size.id} value={size.id}>
                       {size.name}
                     </SelectItem>
                   ))}
@@ -80,9 +109,15 @@ export default function AddItemCartAlert({
           </div>
           <div>
             <Label>Quantity</Label>
-            <Select onValueChange={(e) => setQuantity(Number(e.valueOf()))}>
+            <Select
+              onValueChange={(e) => setQuantity(Number(e.valueOf()))}
+              defaultValue={String(quantity)}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Select a quantity" />
+                <SelectValue
+                  defaultValue={quantity}
+                  placeholder="Select a quantity"
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
@@ -95,20 +130,7 @@ export default function AddItemCartAlert({
               </SelectContent>
             </Select>
           </div>
-          <Button
-            onClick={() => {
-              onClose();
-              dispatch(
-                addItem({
-                  ...item,
-                  size: size as "small" | "medium" | "large",
-                  quantity,
-                  newId: 0,
-                })
-              );
-            }}
-            className="rounded-full w-full mt-3"
-          >
+          <Button onClick={addItemToCart} className="rounded-full w-full mt-3">
             Add to cart
           </Button>
         </div>
