@@ -17,7 +17,7 @@ export const createProduct = async (data: ProductFormTypes) => {
       return { error: "you should be admin." };
     }
 
-    const product = await db.product.create({
+    await db.product.create({
       data: {
         name: data.name,
         description: data.description,
@@ -33,7 +33,7 @@ export const createProduct = async (data: ProductFormTypes) => {
 
     revalidateTag("products");
 
-    return { data: product };
+    return { message: "Product created successfully" };
   } catch (error) {
     console.log("CREATE PRODUCT ACTION:", error);
   }

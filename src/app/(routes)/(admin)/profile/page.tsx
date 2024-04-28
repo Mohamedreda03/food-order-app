@@ -75,13 +75,12 @@ export default function ProfilePage() {
       try {
         await updateUserProfile(data);
       } catch (error) {
-        console.log("onSubmit on Profile page:", error);
-      } finally {
         toast.success("Profile updated successfully");
         setSave(true);
         setTimeout(() => {
           setSave(false);
         }, 5000);
+        console.log("onSubmit on Profile page:", error);
       }
     });
   };

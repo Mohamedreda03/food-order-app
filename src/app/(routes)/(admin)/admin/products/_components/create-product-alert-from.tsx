@@ -47,12 +47,11 @@ const CreateProductAlertFrom = ({ categories }: { categories: Category[] }) => {
     startTransition(async () => {
       try {
         await createProduct(data);
-      } catch (error) {
-        console.log("onSubmit on Products page:", error);
-      } finally {
         toast.success("Category created successfully");
         form.reset();
         setIsOpen(false);
+      } catch (error) {
+        console.log("onSubmit on Products page:", error);
       }
     });
   };
