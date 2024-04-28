@@ -30,23 +30,6 @@ export default function SingleCategoryPage() {
 
   const params: { categoryId: string } = useParams();
 
-  useEffect(() => {
-    getCategoryData();
-  }, []);
-
-  const getCategoryData = async () => {
-    startTransition(async () => {
-      try {
-        const data: any = await getCategory(params.categoryId as string);
-
-        form.setValue("name", data?.name);
-        form.setValue("image", data?.image);
-      } catch (error) {
-        console.log("GET CATEGORY ACTION:", error);
-      }
-    });
-  };
-
   const form = useForm<CategoryFormTypes>({
     resolver: zodResolver(CategorySchema),
     defaultValues: {
@@ -65,6 +48,22 @@ export default function SingleCategoryPage() {
       }
     });
   };
+
+  useEffect(() => {
+    const getCategoryData = async () => {
+      startTransition(async () => {
+        try {
+          const data: any = await getCategory(params.categoryId as string);
+
+          form.setValue("name", data?.name);
+          form.setValue("image", data?.image);
+        } catch (error) {
+          console.log("GET CATEGORY ACTION:", error);
+        }
+      });
+    };
+    getCategoryData();
+  }, [form, params.categoryId]);
 
   const handleUploadSuccess = (result: any) => {
     form.setValue("image", result?.info.secure_url);

@@ -38,7 +38,7 @@ const CartPage = () => {
     if (searchParams.get("canceled")) {
       toast.error("Order canceled");
     }
-  }, []);
+  }, [cart, searchParams]);
 
   return (
     <div className="wrapper py-8 flex flex-col gap-6 min-h-[600px]">

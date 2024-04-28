@@ -48,30 +48,29 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    getUserProfileData();
-  }, []);
+    const getUserProfileData = async () => {
+      startTransitionGet(async () => {
+        try {
+          const data: any = await getUserProfile();
 
-  const getUserProfileData = async () => {
-    startTransitionGet(async () => {
-      try {
-        const data: any = await getUserProfile();
-
-        form.setValue("name", data?.data?.name);
-        form.setValue("email", data?.data?.email);
-        form.setValue("post_code", data?.data?.post_code);
-        form.setValue("street_address", data?.data?.street_address);
-        form.setValue("tel", data?.data?.tel);
-        form.setValue("city", data?.data?.city);
-        form.setValue("country", data?.data?.country);
-        if (data?.data?.image) {
-          form.setValue("image", data?.data?.image);
-          setImage(data?.data?.image);
+          form.setValue("name", data?.data?.name);
+          form.setValue("email", data?.data?.email);
+          form.setValue("post_code", data?.data?.post_code);
+          form.setValue("street_address", data?.data?.street_address);
+          form.setValue("tel", data?.data?.tel);
+          form.setValue("city", data?.data?.city);
+          form.setValue("country", data?.data?.country);
+          if (data?.data?.image) {
+            form.setValue("image", data?.data?.image);
+            setImage(data?.data?.image);
+          }
+        } catch (error) {
+          console.log("getUserProfileData on Profile page:", error);
         }
-      } catch (error) {
-        console.log("getUserProfileData on Profile page:", error);
-      }
-    });
-  };
+      });
+    };
+    getUserProfileData();
+  }, [form]);
 
   const onSubmit = async (data: ProfileFormTypes) => {
     startTransitionUpdate(async () => {

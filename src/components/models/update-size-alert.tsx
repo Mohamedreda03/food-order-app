@@ -38,11 +38,13 @@ export default function UpdateSizeAlert({
   });
 
   useEffect(() => {
-    form.reset({
-      name: currentSize?.name,
-      price: currentSize?.price,
-    });
-  }, [currentSize]);
+    if (currentSize) {
+      form.reset({
+        name: currentSize?.name,
+        price: currentSize?.price,
+      });
+    }
+  }, [form, currentSize]);
 
   const onUpdate = async (data: SizeFormTypes) => {
     startTransition(async () => {

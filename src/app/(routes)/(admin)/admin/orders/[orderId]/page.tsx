@@ -1,6 +1,7 @@
 import { getOrder } from "@/actions/orders/get-order";
 import UpdateOrderActionButton from "@/components/update-order-action-button";
 import { cn, fCurrency } from "@/lib/utils";
+import Image from "next/image";
 
 const OrderPage = async ({ params }: { params: { orderId: string } }) => {
   const order: any = await getOrder(params.orderId);
@@ -134,7 +135,9 @@ const OrderPage = async ({ params }: { params: { orderId: string } }) => {
                     {order?.items.map((item: any) => (
                       <div key={item.id} className="border p-4 rounded-lg">
                         <div className="flex items-center gap-4">
-                          <img
+                          <Image
+                            height={80}
+                            width={80}
                             src={item.image}
                             alt={item.name}
                             className="w-20 h-20 object-cover rounded-md"

@@ -57,19 +57,18 @@ export default function UpdateProductFrom({
   const [isPeindingGetSizes, startTransactionGetSizes] = useTransition();
 
   useEffect(() => {
+    const handleGetSizes = async () => {
+      startTransactionGetSizes(async () => {
+        try {
+          const data = await getProductSizes(product?.id);
+          setSizes(data as Size[]);
+        } catch (error) {
+          console.log("handleGetSizes on Profile page:", error);
+        }
+      });
+    };
     handleGetSizes();
   }, [product]);
-
-  const handleGetSizes = async () => {
-    startTransactionGetSizes(async () => {
-      try {
-        const data = await getProductSizes(product?.id);
-        setSizes(data as Size[]);
-      } catch (error) {
-        console.log("handleGetSizes on Profile page:", error);
-      }
-    });
-  };
 
   const form = useForm<ProductFormTypes>({
     defaultValues: {

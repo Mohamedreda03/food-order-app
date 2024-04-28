@@ -1,8 +1,3 @@
 {
-  "extends": "next",
-  "settings": {
-    "next": {
-      "rootDir": "./src"
-    }
-  }
+  "extends": "next/core-web-vitals"
 }

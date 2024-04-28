@@ -39,20 +39,19 @@ export default function AddItemCartAlert({
   const cart = useCart();
 
   useEffect(() => {
-    getProductSizesData();
-  }, []);
-
-  const getProductSizesData = async () => {
-    try {
-      const data = await getProductSizes(item.id);
-      setSizes(data as Size[]);
-      if (data && data.length > 0) {
-        setSize(data[0].id as string);
+    const getProductSizesData = async () => {
+      try {
+        const data = await getProductSizes(item.id);
+        setSizes(data as Size[]);
+        if (data && data.length > 0) {
+          setSize(data[0].id as string);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    };
+    getProductSizesData();
+  }, [item]);
 
   const addItemToCart = () => {
     cart.addItem({
