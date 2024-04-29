@@ -3,7 +3,6 @@ import ProfileForm from "./_components/profile-form";
 import { auth } from "@/auth";
 import { ProfileFormTypes } from "@/types/schema";
 
-export const dynamic = "force-dynamic";
 export default async function ProfilePage() {
   const session = await auth();
   const data = await getUserProfile();
