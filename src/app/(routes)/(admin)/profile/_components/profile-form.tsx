@@ -12,16 +12,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ProfileFormTypes } from "@/types/schema";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import UploadWidget from "@/components/upload-widget";
 import { updateUserProfile } from "@/actions/profile/update-user-profile";
-import { User } from "@prisma/client";
 
 const ProfileForm = ({ data }: { data: ProfileFormTypes }) => {
   const [isPandingUpdate, startTransitionUpdate] = useTransition();
   const [image, setImage] = useState<string | null>(data.image || null);
+  const [isMounted, setIsMounted] = useState(false);
 
   const form = useForm<ProfileFormTypes>({
     defaultValues: {
@@ -51,6 +51,14 @@ const ProfileForm = ({ data }: { data: ProfileFormTypes }) => {
     form.setValue("image", result.info.secure_url);
     setImage(result.info.secure_url);
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className="flex gap-6 flex-col md:flex-row">
