@@ -24,8 +24,6 @@ const CartPage = () => {
 
   const handleCheckout = async () => {
     startTransition(async () => {
-      // const res = await axios.post("/api/checkout", { items: cart.items });
-      // router.replace(res.data.url);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL}/api/checkout`,
         {

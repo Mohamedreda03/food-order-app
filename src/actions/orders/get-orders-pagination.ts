@@ -40,5 +40,5 @@ export const getOrdersPagination = unstable_cache(
     }
   },
   ["orders"],
-  { tags: ["orders"] }
+  { tags: ["orders"], revalidate: 60 }
 );

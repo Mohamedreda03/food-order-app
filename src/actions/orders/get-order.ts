@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { revalidateTag, unstable_cache } from "next/cache";
+import { unstable_cache, unstable_noStore as noStore } from "next/cache";
 
 export const getOrder = unstable_cache(
   async (orderId: string) => {
@@ -32,5 +32,5 @@ export const getOrder = unstable_cache(
     }
   },
   ["orders"],
-  { tags: ["orders"] }
+  { tags: ["orders"], revalidate: 60 }
 );
