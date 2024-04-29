@@ -40,5 +40,5 @@ export const getUserProfile = unstable_cache(
     }
   },
   ["profile"],
-  { tags: ["profile"] }
+  { tags: ["profile"], revalidate: 60 }
 );
