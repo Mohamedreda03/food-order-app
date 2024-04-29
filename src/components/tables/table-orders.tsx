@@ -1,6 +1,7 @@
 import { Order, User } from "@prisma/client";
 import { cn, fCurrency } from "@/lib/utils";
 import OrderTableActions from "../order-table-actions";
+import { format } from "date-fns";
 
 interface TableProps {
   tableBody?: OrderType[];
@@ -10,7 +11,7 @@ interface OrderType extends Order {
   user: User;
 }
 
-const tableHead = ["UserId", "Total", "Status", "Actions"];
+const tableHead = ["UserId", "Total", "Status", "CreatedAt", "Actions"];
 
 export default async function OrdersTable({ tableBody }: TableProps) {
   return (
@@ -65,6 +66,9 @@ export default async function OrdersTable({ tableBody }: TableProps) {
                   </div>
                 </td>
 
+                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                  {format(new Date(item.createdAt), "hh:mm | dd/MM/yyyy")}
+                </td>
                 <td className="whitespace-nowrap px-4 py-2">
                   <OrderTableActions item={item} />
                 </td>
