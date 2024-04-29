@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
-import { revalidatePath, revalidateTag } from "next/cache";
-import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -38,8 +37,6 @@ export async function POST(req: NextRequest) {
         status: "PAID",
       },
     });
-
-    revalidateTag("orders");
   }
 
   return NextResponse.json({ received: true });
