@@ -2,6 +2,7 @@ import { getOrdersPagination } from "@/actions/orders/get-orders-pagination";
 import PaginationButtons from "@/components/pagination-buttons";
 import OrdersTable from "@/components/tables/table-orders";
 
+export const dynamic = "force-dynamic";
 const OrdersPage = async ({
   searchParams,
 }: {
