@@ -16,7 +16,7 @@ interface OrderType extends Order {
 
 const tableHead = ["UserId", "Total", "Status", "CreatedAt", "Actions"];
 
-export default async function OrdersTable({ tableBody }: TableProps) {
+export default function OrdersTable({ tableBody }: TableProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
