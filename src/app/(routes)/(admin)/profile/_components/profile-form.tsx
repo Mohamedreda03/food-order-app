@@ -21,7 +21,7 @@ import { updateUserProfile } from "@/actions/profile/update-user-profile";
 const ProfileForm = ({ data }: { data: ProfileFormTypes }) => {
   const [isPandingUpdate, startTransitionUpdate] = useTransition();
   const [image, setImage] = useState<string | null>(data.image || null);
-  // const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const form = useForm<ProfileFormTypes>({
     defaultValues: {
@@ -52,13 +52,13 @@ const ProfileForm = ({ data }: { data: ProfileFormTypes }) => {
     setImage(result.info.secure_url);
   };
 
-  // useEffect(() => {
-  //   setIsMounted(true);
-  // }, []);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  // if (!isMounted) {
-  //   return null;
-  // }
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className="flex gap-6 flex-col md:flex-row">
