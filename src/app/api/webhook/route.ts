@@ -34,10 +34,9 @@ export async function POST(req: NextRequest) {
         status: "PAID",
       },
     });
-  }
 
-  revalidateTag("orders");
-  redirect("/admin/orders");
+    revalidateTag("orders");
+  }
 
   return NextResponse.json({ received: true });
 }

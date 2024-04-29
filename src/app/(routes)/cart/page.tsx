@@ -24,8 +24,23 @@ const CartPage = () => {
 
   const handleCheckout = async () => {
     startTransition(async () => {
-      const res = await axios.post("/api/checkout", { items: cart.items });
-      router.replace(res.data.url);
+      // const res = await axios.post("/api/checkout", { items: cart.items });
+      // router.replace(res.data.url);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/checkout`,
+        {
+          method: "POST",
+          cache: "no-cache",
+          next: { tags: ["orders"], revalidate: 30 },
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ items: cart.items }),
+        }
+      );
+
+      const data = await res.json();
+      router.replace(data.url);
     });
   };
 
