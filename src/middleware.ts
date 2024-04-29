@@ -7,18 +7,10 @@ const adminRoutes = ["/products", "/categories", "/all-users"];
 
 const authRoutes = ["/profile", "/cart", "/checkout", "/orders"];
 
-const apiAdminRoutes = [
-  "/api/products",
-  "/api/categories",
-  "/api/orders",
-  "/api/users",
-];
-
 export default auth((req) => {
   const isAuthRoute = authRoutes.includes(req.nextUrl.pathname);
   const isPublicRoute = publicRoutes.includes(req.nextUrl.pathname);
   const isAdminRoute = adminRoutes.includes(req.nextUrl.pathname);
-  const isApiAdminRoute = apiAdminRoutes.includes(req.nextUrl.pathname);
 
   if (isPublicRoute) {
     return NextResponse.next();
@@ -26,10 +18,6 @@ export default auth((req) => {
 
   if (req.auth?.user?.isAdmin) {
     return NextResponse.next();
-  }
-
-  if (isApiAdminRoute && !req.auth?.user?.isAdmin && req.method !== "GET") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   if (isAdminRoute && !req.auth?.user?.isAdmin) {
