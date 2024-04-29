@@ -19,11 +19,12 @@ export async function POST(req: NextRequest) {
       sig!,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
+    console.log(event.type);
   } catch (error) {
     console.log("webhook error", error);
   }
 
-  if (event?.type === "checkout.session.completed") {
+  if (event?.type === "charge.succeeded") {
     const orderId = event?.data?.object?.metadata?.orderId;
 
     await db.order.update({

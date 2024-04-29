@@ -32,5 +32,5 @@ export const getOrder = unstable_cache(
     }
   },
   ["orders"],
-  { tags: ["orders"], revalidate: 60 }
+  { tags: ["orders"], revalidate: 1 }
 );

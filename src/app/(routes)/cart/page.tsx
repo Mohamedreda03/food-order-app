@@ -29,7 +29,6 @@ const CartPage = () => {
         {
           method: "POST",
           cache: "no-cache",
-          next: { tags: ["orders"], revalidate: 30 },
           headers: {
             "Content-Type": "application/json",
           },
