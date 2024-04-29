@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   if (
     event?.type === "charge.succeeded" ||
-    event?.type === "payment_intent.succeeded"
+    event?.type === "checkout.session.completed"
   ) {
     const orderId = event?.data?.object?.metadata?.orderId;
 
