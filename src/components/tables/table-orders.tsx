@@ -4,7 +4,6 @@ import { Order, User } from "@prisma/client";
 import { cn, fCurrency } from "@/lib/utils";
 import OrderTableActions from "../order-table-actions";
 import { format } from "date-fns";
-import { use, useEffect, useState } from "react";
 
 interface TableProps {
   tableBody?: OrderType[];
@@ -17,15 +16,6 @@ interface OrderType extends Order {
 const tableHead = ["UserId", "Total", "Status", "CreatedAt", "Actions"];
 
 export default function OrdersTable({ tableBody }: TableProps) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
   return (
     <>
       <div className="overflow-x-auto">
