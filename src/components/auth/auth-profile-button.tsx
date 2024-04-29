@@ -23,17 +23,16 @@ export default function AuthProfileButton({ id }: { id: string }) {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const data = await getUserProfile(id);
+        setData(data);
+      } catch (error) {
+        console.log("GET USER:", error);
+      }
+    };
     getUserData();
-  }, []);
-
-  const getUserData = async () => {
-    try {
-      const data = await getUserProfile(id);
-      setData(data);
-    } catch (error) {
-      console.log("GET USER:", error);
-    }
-  };
+  }, [id]);
 
   return (
     <>

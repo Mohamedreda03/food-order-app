@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
   if (event?.type === "checkout.session.completed") {
     const orderId = event?.data?.object?.metadata?.orderId;
 
-    const order = await db.order.update({
+    await db.order.update({
       where: {
         id: orderId,
       },
@@ -35,7 +36,8 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  revalidatePath("/admin/orders");
+  revalidateTag("orders");
+  redirect("/admin/orders");
 
   return NextResponse.json({ received: true });
 }
