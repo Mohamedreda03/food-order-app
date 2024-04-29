@@ -24,7 +24,10 @@ export async function POST(req: NextRequest) {
     console.log("webhook error", error);
   }
 
-  if (event?.type === "charge.succeeded") {
+  if (
+    event?.type === "charge.succeeded" ||
+    event?.type === "payment_intent.succeeded"
+  ) {
     const orderId = event?.data?.object?.metadata?.orderId;
 
     await db.order.update({
