@@ -23,7 +23,7 @@ export default async function Header() {
             <CartNav />
           </Link>
           {session ? (
-            <AuthProfileButton />
+            <AuthProfileButton id={session?.user.id} />
           ) : (
             <Link href="/sign-in">
               <Button variant="outline">Login</Button>

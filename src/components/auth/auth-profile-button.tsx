@@ -19,7 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useState } from "react";
 import { getUserProfile } from "@/actions/profile/get-user-profile";
 
-export default function AuthProfileButton() {
+export default function AuthProfileButton({ id }: { id: string }) {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
@@ -28,8 +28,8 @@ export default function AuthProfileButton() {
 
   const getUserData = async () => {
     try {
-      const data = await getUserProfile();
-      setData(data?.data);
+      const data = await getUserProfile(id);
+      setData(data);
     } catch (error) {
       console.log("GET USER:", error);
     }

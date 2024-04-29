@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { unstable_cache } from "next/cache";
 
 export const getUserProfile = unstable_cache(
-  async () => {
+  async (id: string) => {
     try {
       const session = await auth();
 
@@ -15,7 +15,7 @@ export const getUserProfile = unstable_cache(
 
       const data = await db.user.findFirst({
         where: {
-          email: session.user?.email,
+          id: id,
         },
         select: {
           name: true,
@@ -34,7 +34,7 @@ export const getUserProfile = unstable_cache(
         return { error: "User not found" };
       }
 
-      return { data };
+      return data;
     } catch (error) {
       console.log("GET PROFILE  ACTION:", error);
     }
