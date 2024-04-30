@@ -55,6 +55,7 @@ export default function UpdateProductFrom({
   const [sizes, setSizes] = useState<Size[]>([]);
 
   const [isPeindingGetSizes, startTransactionGetSizes] = useTransition();
+  const [isPeindingUpdate, startTransactionUpdate] = useTransition();
 
   useEffect(() => {
     const handleGetSizes = async () => {
@@ -84,17 +85,19 @@ export default function UpdateProductFrom({
   useEffect(() => {}, [image]);
 
   const onSubmit = async (data: ProductFormTypes) => {
-    try {
-      await updateProduct(product?.id, data);
-    } catch (error) {
-      console.log("onSubmit on Profile page:", error);
-    } finally {
-      toast.success("Product updated successfully");
-      setSave(true);
-      setTimeout(() => {
-        setSave(false);
-      }, 5000);
-    }
+    startTransactionUpdate(async () => {
+      try {
+        await updateProduct(product?.id, data);
+      } catch (error) {
+        console.log("onSubmit on Profile page:", error);
+      } finally {
+        toast.success("Product updated successfully");
+        setSave(true);
+        setTimeout(() => {
+          setSave(false);
+        }, 5000);
+      }
+    });
   };
 
   const handleUploadSuccess = (result: any) => {
@@ -143,7 +146,7 @@ export default function UpdateProductFrom({
                       <FormLabel>Item name</FormLabel>
                       <FormControl>
                         <Input
-                          disabled={isPeindingGetSizes}
+                          disabled={isPeindingGetSizes || isPeindingUpdate}
                           placeholder="user name"
                           {...field}
                         />
@@ -161,7 +164,7 @@ export default function UpdateProductFrom({
                         <FormLabel>Price</FormLabel>
                         <FormControl>
                           <Input
-                            disabled={isPeindingGetSizes}
+                            disabled={isPeindingGetSizes || isPeindingUpdate}
                             placeholder="item price"
                             {...field}
                           />
@@ -178,7 +181,7 @@ export default function UpdateProductFrom({
                       <FormItem className="w-full">
                         <FormLabel>Category</FormLabel>
                         <Select
-                          disabled={isPeindingGetSizes}
+                          disabled={isPeindingGetSizes || isPeindingUpdate}
                           onValueChange={field.onChange}
                           defaultValue={product?.categoryId}
                           value={field.value}
@@ -194,6 +197,9 @@ export default function UpdateProductFrom({
                           <SelectContent defaultValue={product?.id}>
                             {categories?.map((category: Category) => (
                               <SelectItem
+                                disabled={
+                                  isPeindingGetSizes || isPeindingUpdate
+                                }
                                 key={category?.id}
                                 value={category?.id}
                               >
@@ -220,7 +226,7 @@ export default function UpdateProductFrom({
                           <FormControl>
                             <Textarea
                               className="min-h-[200px]"
-                              disabled={isPeindingGetSizes}
+                              disabled={isPeindingGetSizes || isPeindingUpdate}
                               {...field}
                               placeholder="Type Description for this item."
                             />
@@ -238,6 +244,9 @@ export default function UpdateProductFrom({
                             <div className="flex items-center gap-2">
                               <FormControl>
                                 <Checkbox
+                                  disabled={
+                                    isPeindingGetSizes || isPeindingUpdate
+                                  }
                                   checked={field.value as any}
                                   onCheckedChange={field.onChange}
                                 />
@@ -255,7 +264,7 @@ export default function UpdateProductFrom({
                 </div>
               </div>
               <Button
-                disabled={isPeindingGetSizes}
+                disabled={isPeindingGetSizes || isPeindingUpdate}
                 type="submit"
                 className="w-full sm:w-[150px]"
               >
