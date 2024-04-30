@@ -3,29 +3,33 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { User } from "@prisma/client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { updateUser } from "@/actions/users/update-user";
+import toast from "react-hot-toast";
 
 const UpdateRoleButton = ({ userId, user }: { userId: string; user: User }) => {
   const [isAdmin, setIsAdmin] = useState(user.isAdmin);
+  const [isLoading, startTransition] = useTransition();
+
   const onSubmit = async () => {
-    try {
-      const data = {
-        id: userId,
-        data: {
+    startTransition(async () => {
+      try {
+        const data = {
           isAdmin: isAdmin,
-        },
-      };
-      await updateUser(user.id, data);
-    } catch (error) {
-      console.log("onSubmit on User page:", error);
-    }
+        };
+        await updateUser(userId, data);
+        toast.success("Role updated successfully");
+      } catch (error) {
+        console.log("onSubmit on User page:", error);
+      }
+    });
   };
 
   return (
     <>
       <div className="flex items-center space-x-2 border border-gray-200 rounded-md p-2">
         <Checkbox
+          disabled={isLoading}
           defaultChecked={user?.isAdmin}
           onCheckedChange={(e) => {
             setIsAdmin(e.valueOf() as boolean);
@@ -38,7 +42,12 @@ const UpdateRoleButton = ({ userId, user }: { userId: string; user: User }) => {
           Is Admin
         </label>
       </div>
-      <Button onClick={onSubmit} type="button" className="w-[200px]">
+      <Button
+        disabled={isLoading}
+        onClick={onSubmit}
+        type="button"
+        className="w-[200px]"
+      >
         Update Role
       </Button>
     </>
