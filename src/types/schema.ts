@@ -45,6 +45,18 @@ export const ProfileSchema = z.object({
 
 export type ProfileFormTypes = z.infer<typeof ProfileSchema>;
 
+// profile
+
+export const AddressSchema = z.object({
+  tel: z.string().min(7),
+  street_address: z.string().min(2),
+  post_code: z.string().min(2),
+  city: z.string().min(2),
+  country: z.string().min(2),
+});
+
+export type AddressFormTypes = z.infer<typeof AddressSchema>;
+
 // Categories
 
 export const CategorySchema = z.object({

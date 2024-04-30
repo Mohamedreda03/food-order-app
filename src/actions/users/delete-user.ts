@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { revalidateTag } from "next/cache";
 
-export const updateUser = async (userId: string, data: any) => {
+export const deleteUser = async (userId: string) => {
   const session = await auth();
 
   if (!session) {
@@ -15,24 +15,13 @@ export const updateUser = async (userId: string, data: any) => {
     return { error: "you should be admin." };
   }
 
-  const foundUser = await db.user.findFirst({
+  await db.user.delete({
     where: {
       id: userId,
     },
   });
 
-  if (!foundUser) {
-    return { error: "User not found" };
-  }
-
-  const user = await db.user.update({
-    where: {
-      id: foundUser.id,
-    },
-    data,
-  });
-
   revalidateTag("users");
 
-  return { data: user };
+  return { message: "User deleted" };
 };
