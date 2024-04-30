@@ -6,35 +6,31 @@ import { ProductFormTypes } from "@/types/schema";
 import { revalidateTag } from "next/cache";
 
 export const createProduct = async (data: ProductFormTypes) => {
-  try {
-    const session = await auth();
+  const session = await auth();
 
-    if (!session) {
-      return { error: "Unauthorized" };
-    }
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
 
-    if (!session.user?.isAdmin) {
-      return { error: "you should be admin." };
-    }
+  if (!session.user?.isAdmin) {
+    return { error: "you should be admin." };
+  }
 
-    await db.product.create({
-      data: {
-        name: data.name,
-        description: data.description,
-        price: data.price,
-        image: data.image,
-        category: {
-          connect: {
-            id: data.categoryId,
-          },
+  await db.product.create({
+    data: {
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      image: data.image,
+      category: {
+        connect: {
+          id: data.categoryId,
         },
       },
-    });
+    },
+  });
 
-    revalidateTag("products");
+  revalidateTag("products");
 
-    return { message: "Product created successfully" };
-  } catch (error) {
-    console.log("CREATE PRODUCT ACTION:", error);
-  }
+  return { message: "Product created successfully" };
 };

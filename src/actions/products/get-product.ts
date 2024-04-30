@@ -2,30 +2,24 @@
 
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { unstable_cache } from "next/cache";
+import { unstable_noStore as noStore } from "next/cache";
 
-export const getProduct = unstable_cache(
-  async (productId: string) => {
-    try {
-      const session = await auth();
+export const getProduct = async (productId: string) => {
+  noStore();
 
-      if (!session) {
-        return { error: "Unauthorized" };
-      }
+  const session = await auth();
 
-      if (!session.user?.isAdmin) {
-        return { error: "you should be admin." };
-      }
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
 
-      const data = await db.product.findFirst({
-        where: { id: productId },
-      });
+  if (!session.user?.isAdmin) {
+    return { error: "you should be admin." };
+  }
 
-      return data;
-    } catch (error) {
-      console.log("GET ORDER ACTION:", error);
-    }
-  },
-  ["products"],
-  { tags: ["products"] }
-);
+  const data = await db.product.findFirst({
+    where: { id: productId },
+  });
+
+  return data;
+};

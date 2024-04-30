@@ -2,36 +2,30 @@
 
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { unstable_cache } from "next/cache";
+import { unstable_noStore as noStore } from "next/cache";
 
-export const getUser = unstable_cache(
-  async (userId: string) => {
-    try {
-      const session = await auth();
+export const getUser = async (userId: string) => {
+  noStore();
 
-      if (!session) {
-        return { error: "Unauthorized" };
-      }
+  const session = await auth();
 
-      if (!session.user?.isAdmin) {
-        return { error: "you should be admin." };
-      }
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
 
-      const data = await db.user.findUnique({
-        where: {
-          id: userId,
-        },
-      });
+  if (!session.user?.isAdmin) {
+    return { error: "you should be admin." };
+  }
 
-      if (!data) {
-        return { error: "User not found" };
-      }
+  const data = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
 
-      return { data };
-    } catch (error) {
-      console.log("GET ALL CATEGORIES ACTION:", error);
-    }
-  },
-  ["users"],
-  { tags: ["users"] }
-);
+  if (!data) {
+    return { error: "User not found" };
+  }
+
+  return { data };
+};

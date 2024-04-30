@@ -2,9 +2,10 @@
 
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { revalidateTag } from "next/cache";
+import { unstable_noStore as noStore } from "next/cache";
 
-export const deleteUser = async (userId: string) => {
+export const getCategory = async (categoryId: string) => {
+  noStore();
   const session = await auth();
 
   if (!session) {
@@ -15,13 +16,9 @@ export const deleteUser = async (userId: string) => {
     return { error: "you should be admin." };
   }
 
-  await db.user.delete({
-    where: {
-      id: userId,
-    },
+  const data = await db.category.findFirst({
+    where: { id: categoryId },
   });
 
-  revalidateTag("users");
-
-  return { message: "User deleted" };
+  return data;
 };
