@@ -14,7 +14,7 @@ import MobileNavLinks from "./mobile-nav-links";
 
 export default function MobileMenu() {
   return (
-    <div className="md:hidden">
+    <div className="md:hidden flex items-center">
       <Sheet>
         <SheetTrigger>
           <Menu className="h-10 w-10" />

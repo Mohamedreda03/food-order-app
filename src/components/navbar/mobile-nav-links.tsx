@@ -17,21 +17,10 @@ const navData = [
     label: "Menu",
     link: "/menu",
   },
-  {
-    id: 3,
-    label: "About",
-    link: "/about",
-  },
-  {
-    id: 4,
-    label: "Contact",
-    link: "/contact",
-  },
 ];
 
 export default function MobileNavLinks() {
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   return (
     <nav>
@@ -49,13 +38,6 @@ export default function MobileNavLinks() {
             </li>
           );
         })}
-        <li className="w-full">
-          <Link href="/profile">
-            <Button variant="default" className="text-md text-gray-700">
-              {session?.user?.name}
-            </Button>
-          </Link>
-        </li>
       </ul>
     </nav>
   );

@@ -15,8 +15,8 @@ const Page = async () => {
   return (
     <>
       <div className="wrapper my-20">
-        <h1 className="flex items-center justify-center text-6xl font-medium text-primary">
-          Categories
+        <h1 className="flex items-center justify-center text-6xl font-semibold text-primary mb-14">
+          MENU
         </h1>
         <div>
           {data?.data?.map((category: CategoryType, i: number) => (

@@ -18,7 +18,7 @@ export default async function Header() {
         <div className="hidden md:block">
           <NavLinks />
         </div>
-        <div className="flex items-center gap-5 md:gap-6">
+        <div className="flex items-center justify-center gap-3 md:gap-6">
           <Link href="/cart">
             <CartNav />
           </Link>
