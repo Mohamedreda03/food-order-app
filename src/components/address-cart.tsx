@@ -13,7 +13,7 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { AddressFormTypes } from "@/types/schema";
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { updateUserProfile } from "@/actions/profile/update-user-profile";
 import toast from "react-hot-toast";
 import { getUserProfile } from "@/actions/profile/get-user-profile";
@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import useCart, { type CartItem } from "@/hooks/use-cart";
 
 const AddressCart = () => {
+  const [user, setUser] = useState<any>({});
   const [isPandingUpdate, startTransitionUpdate] = useTransition();
   const [isPandingGetAddress, startTransitionGetAddress] = useTransition();
   const [isPending, startTransition] = useTransition();
@@ -48,24 +49,26 @@ const AddressCart = () => {
   });
 
   useEffect(() => {
-    const handleGetAddress = async () => {
-      startTransitionGetAddress(async () => {
-        try {
-          const user: any = await getUserProfile(data?.user.id!);
-          form.reset({
-            tel: user.tel,
-            street_address: user.street_address,
-            post_code: user.post_code,
-            city: user.city,
-            country: user.country,
-          });
-        } catch (error) {
-          console.log("handleGetAddress on Address page:", error);
-        }
-      });
-    };
     handleGetAddress();
   }, [data?.user.id]);
+
+  const handleGetAddress = async () => {
+    startTransitionGetAddress(async () => {
+      try {
+        const user: any = await getUserProfile(data?.user.id!);
+        setUser(user);
+        form.reset({
+          tel: user.tel,
+          street_address: user.street_address,
+          post_code: user.post_code,
+          city: user.city,
+          country: user.country,
+        });
+      } catch (error) {
+        console.log("handleGetAddress on Address page:", error);
+      }
+    });
+  };
 
   const handleCheckout = async () => {
     startTransition(async () => {
@@ -91,6 +94,7 @@ const AddressCart = () => {
       try {
         await updateUserProfile(data as any);
         toast.success("Address updated successfully");
+        handleGetAddress();
       } catch (error) {
         console.log("onSubmit on Address page:", error);
       }
@@ -214,11 +218,11 @@ const AddressCart = () => {
         <Button
           disabled={
             isPending ||
-            form.getValues().tel === "" ||
-            form.getValues().street_address === "" ||
-            form.getValues().post_code === "" ||
-            form.getValues().city === "" ||
-            form.getValues().country === ""
+            user.tel === "" ||
+            user.street_address === "" ||
+            user.post_code === "" ||
+            user.city === "" ||
+            user.country === ""
           }
           onClick={handleCheckout}
           className="rounded-full w-full"
