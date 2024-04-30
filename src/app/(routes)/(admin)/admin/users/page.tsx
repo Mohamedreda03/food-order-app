@@ -1,4 +1,3 @@
-import Loading from "@/components/Loading";
 import PaginationButtons from "@/components/pagination-buttons";
 import UsersTable from "@/components/tables/table-users";
 import { getUsersPagination } from "@/actions/users/get-users-pagination";

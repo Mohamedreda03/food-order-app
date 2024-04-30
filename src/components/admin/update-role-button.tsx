@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { User } from "@prisma/client";
 import { useState } from "react";
-import { updateUser } from "@/actions/users/delete-user";
+import { updateUser } from "@/actions/users/update-user";
 
 const UpdateRoleButton = ({ userId, user }: { userId: string; user: User }) => {
   const [isAdmin, setIsAdmin] = useState(user.isAdmin);

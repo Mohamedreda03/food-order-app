@@ -9,7 +9,7 @@ import DeleteAlert from "../models/delete-alert";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { deleteUser } from "@/actions/users/update-user";
+import { deleteUser } from "@/actions/users/delete-user";
 
 interface TableProps {
   tableBody?: User[];
