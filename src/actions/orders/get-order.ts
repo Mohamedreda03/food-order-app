@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { unstable_cache, unstable_noStore as noStore } from "next/cache";
 
 export const getOrder = async (orderId: string) => {
+  noStore();
   const session = await auth();
 
   if (!session) {
