@@ -65,7 +65,6 @@ const AddressCart = () => {
           city: user.city,
           country: user.country,
         });
-        console.log(user);
       } catch (error) {
         console.log("handleGetAddress on Address page:", error);
       }

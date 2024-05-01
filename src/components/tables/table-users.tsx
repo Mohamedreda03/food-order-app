@@ -18,40 +18,40 @@ interface TableProps {
 const tableHead = ["Image", "Name", "Role", "Email", "Actions"];
 
 export default function UsersTable({ tableBody }: TableProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [isLoading, startTransition] = useTransition();
-  const router = useRouter();
+  // const [isOpen, setIsOpen] = useState(false);
+  // const [currentUser, setCurrentUser] = useState<string | null>(null);
+  // const [isLoading, startTransition] = useTransition();
+  // const router = useRouter();
 
   const onCopy = (description: string) => {
     navigator.clipboard.writeText(description);
     toast.success("Email copied.");
   };
 
-  const onDelete = async () => {
-    startTransition(async () => {
-      try {
-        await deleteUser(currentUser as string);
-      } catch (error) {
-        console.log("onDelete on user page:", error);
-      } finally {
-        router.refresh();
-        setIsOpen(false);
-        toast.success("user deleted successfully");
-      }
-    });
-  };
+  // const onDelete = async () => {
+  //   startTransition(async () => {
+  //     try {
+  //       await deleteUser(currentUser as string);
+  //     } catch (error) {
+  //       console.log("onDelete on user page:", error);
+  //     } finally {
+  //       router.refresh();
+  //       setIsOpen(false);
+  //       toast.success("user deleted successfully");
+  //     }
+  //   });
+  // };
 
   return (
     <>
-      <DeleteAlert
+      {/* <DeleteAlert
         title="Delete"
         description="Are you sure you want to delete this user?"
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onDelete={onDelete}
         isLoading={isLoading}
-      />
+      /> */}
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
           <thead className="ltr:text-left rtl:text-right">
@@ -108,16 +108,16 @@ export default function UsersTable({ tableBody }: TableProps) {
                     <Link href={`/admin/users/${item.id}`}>
                       <Button>Edit</Button>
                     </Link>
-                    <Button
+                    {/* <Button
                       onClick={() => {
-                        setIsOpen(true);
                         setCurrentUser(item.id);
+                        setIsOpen(true);
                       }}
                       className="px-2"
                       variant="destructive"
                     >
                       <Trash2 size={20} />
-                    </Button>
+                    </Button> */}
                   </div>
                 </td>
               </tr>
