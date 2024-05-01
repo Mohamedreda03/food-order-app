@@ -40,7 +40,7 @@ export default function ProductsTable({ tableBody }: TableProps) {
 
   const onCopy = (description: string) => {
     navigator.clipboard.writeText(description);
-    toast.success("Email copied.");
+    toast.success("copied.");
   };
 
   const onDelete = async () => {

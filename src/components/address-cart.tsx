@@ -24,7 +24,8 @@ import { useRouter } from "next/navigation";
 import useCart, { type CartItem } from "@/hooks/use-cart";
 
 const AddressCart = () => {
-  const [user, setUser] = useState<any>({});
+  const [user, setUser] = useState<any | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const [isPandingUpdate, startTransitionUpdate] = useTransition();
   const [isPandingGetAddress, startTransitionGetAddress] = useTransition();
   const [isPending, startTransition] = useTransition();
@@ -55,7 +56,7 @@ const AddressCart = () => {
   const handleGetAddress = async () => {
     startTransitionGetAddress(async () => {
       try {
-        const user: any = await getUserProfile(data?.user.id!);
+        const user: any = await getUserProfile();
         setUser(user);
         form.reset({
           tel: user.tel,
@@ -64,6 +65,7 @@ const AddressCart = () => {
           city: user.city,
           country: user.country,
         });
+        console.log(user);
       } catch (error) {
         console.log("handleGetAddress on Address page:", error);
       }
@@ -100,6 +102,14 @@ const AddressCart = () => {
       }
     });
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <>
@@ -218,11 +228,12 @@ const AddressCart = () => {
         <Button
           disabled={
             isPending ||
-            user.tel === "" ||
-            user.street_address === "" ||
-            user.post_code === "" ||
-            user.city === "" ||
-            user.country === ""
+            user?.tel === null ||
+            user?.street_address === null ||
+            user?.post_code === null ||
+            user?.city === null ||
+            user?.country === null ||
+            user === null
           }
           onClick={handleCheckout}
           className="rounded-full w-full"

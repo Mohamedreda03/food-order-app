@@ -33,11 +33,11 @@ export default function UsersTable({ tableBody }: TableProps) {
       try {
         await deleteUser(currentUser as string);
       } catch (error) {
-        console.log("onDelete on Products page:", error);
+        console.log("onDelete on user page:", error);
       } finally {
         router.refresh();
         setIsOpen(false);
-        toast.success("Category deleted successfully");
+        toast.success("user deleted successfully");
       }
     });
   };
@@ -46,7 +46,7 @@ export default function UsersTable({ tableBody }: TableProps) {
     <>
       <DeleteAlert
         title="Delete"
-        description="Are you sure you want to delete this item?"
+        description="Are you sure you want to delete this user?"
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onDelete={onDelete}
@@ -95,9 +95,6 @@ export default function UsersTable({ tableBody }: TableProps) {
                 <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
                   {item.email}
                 </td>
-                {/* <td className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                  {format(new Date(item.createdAt), "dd/MM/yyyy")}
-                </td> */}
 
                 <td className="whitespace-nowrap px-4 py-2">
                   <div className="flex items-center justify-center gap-2">

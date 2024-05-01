@@ -6,7 +6,7 @@ import { ProfileFormTypes } from "@/types/schema";
 export const dynamic = "force-dynamic";
 export default async function ProfilePage() {
   const session = await auth();
-  const data = await getUserProfile(session?.user.id as any);
+  const data = await getUserProfile();
 
   return (
     <>

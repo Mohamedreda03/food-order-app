@@ -4,7 +4,7 @@ import AddressCart from "@/components/address-cart";
 import CartItem from "@/components/cart-item";
 import useCart, { type CartItem as CartItemType } from "@/hooks/use-cart";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useTransition } from "react";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 
 const CartPage = () => {

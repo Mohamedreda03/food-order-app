@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { unstable_noStore as noStore } from "next/cache";
 
-export const getUserProfile = async (id: string) => {
+export const getUserProfile = async () => {
   noStore();
   const session = await auth();
 
@@ -14,7 +14,7 @@ export const getUserProfile = async (id: string) => {
 
   const data = await db.user.findFirst({
     where: {
-      id: id,
+      id: session?.user.id,
     },
     select: {
       name: true,
